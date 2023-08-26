@@ -17,6 +17,7 @@ import { Member } from './member/entities/member.entity';
 import { MemberGroupe } from './member-group/entities/member-group.entity';
 import { Restaurant } from './restaurant/entities/restaurant.entity';
 import { Review } from './review/entities/review.entity';
+import { AuthModule } from './auth/auth.module';
 
 dotenv.config({ path: '.env' });
 
@@ -49,6 +50,7 @@ dotenv.config({ path: '.env' });
     ReviewModule,
     GroupModule,
     MemberGroupModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
