@@ -19,40 +19,40 @@ export class MemberService {
     private readonly memberRepository: Repository<Member>,
   ) {}
 
-  async create(
-    createMemberDto: CreateMemberDto,
-  ): Promise<CreateMemberResponse> {
-    try {
-      const saltRounds = 10;
-      const member = new Member();
-      member.lastname = createMemberDto.lastname;
-      member.firstname = createMemberDto.firstname;
-      member.username = createMemberDto.username;
-      member.email = createMemberDto.email;
-      member.password = await bcrypt.hash(createMemberDto.password, saltRounds);
+  // async create(
+  //   createMemberDto: CreateMemberDto,
+  // ): Promise<CreateMemberResponse> {
+  //   try {
+  //     const saltRounds = 10;
+  //     const member = new Member();
+  //     member.lastname = createMemberDto.lastname;
+  //     member.firstname = createMemberDto.firstname;
+  //     member.username = createMemberDto.username;
+  //     member.email = createMemberDto.email;
+  //     member.password = await bcrypt.hash(createMemberDto.password, saltRounds);
 
-      await this.memberRepository.save(member);
-      return {
-        status: HttpStatus.OK,
-        message: `Creation du menbre ${member.username} validé !`,
-      };
-    } catch (err) {
-      if (err.code === '23505') {
-        /* Le code 23505 attrape l'erreur de violation de contrainte d'unicité.
-       Cela se produit généralement lorsqu'une tentative est faite d'insérer ou de mettre à jour une valeur en doublon
-       dans une colonne qui a été marquée comme unique dans la base de données. */
-        throw new HttpException(
-          `Le pseudo ${createMemberDto.username} est deja utilisé !`,
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-      console.log(`Une erreur c\'est produite lors de la creation : ${err}`);
-      throw new HttpException(
-        'La création du membre a échoué',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
+  //     await this.memberRepository.save(member);
+  //     return {
+  //       status: HttpStatus.OK,
+  //       message: `Creation du menbre ${member.username} validé !`,
+  //     };
+  //   } catch (err) {
+  //     if (err.code === '23505') {
+  //       /* Le code 23505 attrape l'erreur de violation de contrainte d'unicité.
+  //      Cela se produit généralement lorsqu'une tentative est faite d'insérer ou de mettre à jour une valeur en doublon
+  //      dans une colonne qui a été marquée comme unique dans la base de données. */
+  //       throw new HttpException(
+  //         `Le pseudo ${createMemberDto.username} est deja utilisé !`,
+  //         HttpStatus.BAD_REQUEST,
+  //       );
+  //     }
+  //     console.log(`Une erreur c\'est produite lors de la creation : ${err}`);
+  //     throw new HttpException(
+  //       'La création du membre a échoué',
+  //       HttpStatus.INTERNAL_SERVER_ERROR,
+  //     );
+  //   }
+  // }
 
   async login(username: string, password: string): Promise<any> {
     const member = await this.memberRepository.findOne({ where: { username } });
