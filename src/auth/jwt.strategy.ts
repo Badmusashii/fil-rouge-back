@@ -6,6 +6,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Member } from 'src/member/entities/member.entity';
 import { Repository } from 'typeorm';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: '.env' });
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -14,15 +17,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private memberRepository: Repository<Member>,
   ) {
     super({
-      secretOrKey: 'cool',
+      secretOrKey: process.env.ACCESS_TOKEN_SECRET,
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     });
   }
 
   // IMPORTANT IL FAUT GARDER CE NOM DE METHODE
   async validate(payload: any): Promise<Member> {
-    console.log('validate');
-    console.log(payload);
+    // console.log('validate');
+    // console.log(payload);
     const { username } = payload;
     const member: Member = await this.memberRepository.findOneBy({ username });
 
