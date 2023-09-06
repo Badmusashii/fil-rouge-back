@@ -2,10 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-
 import { CategorieModule } from './categorie/categorie.module';
-import * as dotenv from 'dotenv';
-
 import { Categorie } from './categorie/entities/categorie.entity';
 import { MemberModule } from './member/member.module';
 import { RestaurantModule } from './restaurant/restaurant.module';
@@ -18,12 +15,14 @@ import { MemberGroupe } from './member-group/entities/member-group.entity';
 import { Restaurant } from './restaurant/entities/restaurant.entity';
 import { Review } from './review/entities/review.entity';
 import { AuthModule } from './auth/auth.module';
-
-dotenv.config({ path: '.env' });
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ envFilePath: [`.env`] }),
+    // ConfigModule pour la gestion du fichier environnement
     TypeOrmModule.forRoot({
+      // TypeOrm et sa config pour se connecter à la BDD
       type: 'postgres',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
