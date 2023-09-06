@@ -21,7 +21,9 @@ export class AuthService {
   async register(createAuthDto: CreateAuthDto) {
     const { lastname, firstname, username, email, password } = createAuthDto;
     const salt = await bcrypt.genSalt();
+    console.log(salt);
     const hashedPassword = await bcrypt.hash(password, salt);
+    console.log(hashedPassword);
     const member = this.memberRepository.create({
       lastname,
       firstname,
