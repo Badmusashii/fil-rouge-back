@@ -24,7 +24,7 @@ export class MemberService {
     currentPassword: string,
     updateMemberDto: UpdateMemberDto,
   ): Promise<Member> {
-    const member = await this.memberRepository.findOne({ where: { id } });
+    const member = await this.memberRepository.findOne({ where: { id: id } });
 
     if (!member) {
       throw new HttpException(
