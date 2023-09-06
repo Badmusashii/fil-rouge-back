@@ -23,7 +23,7 @@ export class Restaurant {
   @Column({ type: 'enum', enum: Price })
   price: Price;
 
-  @ManyToOne(() => Member)
+  @ManyToOne(() => Member, (member) => member.restaurants)
   @JoinColumn({ name: 'idMember' })
   member: Member;
 

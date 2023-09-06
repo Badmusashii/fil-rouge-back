@@ -21,8 +21,8 @@ CREATE TABLE restaurant (
   name VARCHAR(255) NOT NULL,
   adresse VARCHAR(255) NOT NULL,
   price price NOT NULL,
-  idMember INTEGER,
-  idCategorie INTEGER,
+  idMember INTEGER NOT NULL,
+  idCategorie INTEGER NOT NULL,
   FOREIGN KEY (idMember) REFERENCES member(id),
   FOREIGN KEY (idCategorie) REFERENCES categorie(id)
 );
