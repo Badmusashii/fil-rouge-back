@@ -13,6 +13,12 @@ export class Review {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ type: 'text' })
+  review: string;
+
+  @Column({ type: 'boolean' })
+  vote: boolean;
+
   @ManyToOne(() => Member)
   @JoinColumn({ name: 'idMember' })
   member: Member;
@@ -20,10 +26,4 @@ export class Review {
   @ManyToOne(() => Restaurant)
   @JoinColumn({ name: 'idRestaurant' })
   restaurant: Restaurant;
-
-  @Column({ type: 'text' })
-  review: string;
-
-  @Column({ type: 'boolean' })
-  vote: boolean;
 }

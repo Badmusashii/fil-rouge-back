@@ -5,6 +5,6 @@ export class Categorie {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ length: 255 })
   name: string;
 }
