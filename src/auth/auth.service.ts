@@ -47,8 +47,8 @@ export class AuthService {
     const { username, password } = loginDto;
     const member = await this.memberRepository.findOneBy({ username });
     if (member && (await bcrypt.compare(password, member.password))) {
-      const payload = { username };
-      const accessToken = await this.jwtService.sign(payload);
+      const payload = { username, sub: member.id };
+      const accessToken = this.jwtService.sign(payload);
       return { accessToken };
     } else {
       throw new UnauthorizedException('Probleme dans vos identifiants !');
