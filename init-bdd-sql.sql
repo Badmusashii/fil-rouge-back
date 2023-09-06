@@ -37,7 +37,7 @@ CREATE TABLE review (
   FOREIGN KEY (idRestaurant) REFERENCES restaurant(id)
 );
 
-CREATE TABLE group (
+CREATE TABLE groupe (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL
 );
@@ -47,6 +47,6 @@ CREATE TABLE membergroupe (
   idMember INTEGER,
   idGroupe INTEGER,
   FOREIGN KEY (idMember) REFERENCES member(id),
-  FOREIGN KEY (idGroupe) REFERENCES group(id)
+  FOREIGN KEY (idGroupe) REFERENCES groupe(id)
 );
 

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateGroupDto } from './dto/create-group.dto';
-import { UpdateGroupDto } from './dto/update-group.dto';
+import { CreateGroupeDto } from './dto/create-groupe.dto';
+import { UpdateGroupeDto } from './dto/update-groupe.dto';
 
 @Injectable()
-export class GroupService {
-  create(createGroupDto: CreateGroupDto) {
+export class GroupeService {
+  create(createGroupeDto: CreateGroupeDto) {
     return 'This action adds a new group';
   }
 
@@ -16,7 +16,7 @@ export class GroupService {
     return `This action returns a #${id} group`;
   }
 
-  update(id: number, updateGroupDto: UpdateGroupDto) {
+  update(id: number, updateGroupeDto: UpdateGroupeDto) {
     return `This action updates a #${id} group`;
   }
 

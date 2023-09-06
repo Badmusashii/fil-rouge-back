@@ -7,9 +7,9 @@ import { Categorie } from './categorie/entities/categorie.entity';
 import { MemberModule } from './member/member.module';
 import { RestaurantModule } from './restaurant/restaurant.module';
 import { ReviewModule } from './review/review.module';
-import { GroupModule } from './group/group.module';
+import { GroupeModule } from './groupe/groupe.module';
 import { MemberGroupModule } from './member-group/member-group.module';
-import { Group } from './group/entities/group.entity';
+import { Groupe } from './groupe/entities/groupe.entity';
 import { Member } from './member/entities/member.entity';
 import { MemberGroupe } from './member-group/entities/member-group.entity';
 import { Restaurant } from './restaurant/entities/restaurant.entity';
@@ -29,7 +29,7 @@ import { ConfigModule } from '@nestjs/config';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Categorie, Group, Member, MemberGroupe, Restaurant, Review],
+      entities: [Categorie, Groupe, Member, MemberGroupe, Restaurant, Review],
       // Endroit ou il faut mettre toutes les entités pour que typeOrm les prennent
       // en compte.
       synchronize: false,
@@ -47,7 +47,7 @@ import { ConfigModule } from '@nestjs/config';
     MemberModule,
     RestaurantModule,
     ReviewModule,
-    GroupModule,
+    GroupeModule,
     MemberGroupModule,
     AuthModule,
   ],

@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Member } from 'src/member/entities/member.entity';
-import { Group } from 'src/group/entities/group.entity';
+import { Groupe } from 'src/groupe/entities/groupe.entity';
 
 @Entity()
 export class MemberGroupe {
@@ -11,7 +11,7 @@ export class MemberGroupe {
   @JoinColumn({ name: 'idMember' })
   member: Member;
 
-  @ManyToOne(() => Group)
+  @ManyToOne(() => Groupe)
   @JoinColumn({ name: 'idGroupe' })
-  group: Group;
+  group: Groupe;
 }
