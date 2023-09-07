@@ -6,7 +6,7 @@ CREATE TABLE member (
   firstname VARCHAR(255) NOT NULL,
   username VARCHAR(255) UNIQUE NOT NULL,
   email VARCHAR(255) NOT NULL,
-  password VARCHAR(65) NOT NULL
+  password VARCHAR(60) NOT NULL
 );
 
 CREATE TYPE price AS ENUM ('€', '€€', '€€€');
@@ -23,8 +23,8 @@ CREATE TABLE restaurant (
   price price NOT NULL,
   idMember INTEGER NOT NULL,
   idCategorie INTEGER NOT NULL,
-  FOREIGN KEY (idMember) REFERENCES member(id),
-  FOREIGN KEY (idCategorie) REFERENCES categorie(id)
+  CONSTRAINT fk_member FOREIGN KEY (idMember) REFERENCES member(id),
+  CONSTRAINT fk_categorie FOREIGN KEY (idCategorie) REFERENCES categorie(id)
 );
 
 CREATE TABLE review (
@@ -40,6 +40,7 @@ CREATE TABLE review (
 CREATE TABLE groupe (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL
+  idAvis INT FOREIGN KEY NOT NULL
 );
 
 CREATE TABLE membergroupe (

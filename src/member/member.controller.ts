@@ -12,6 +12,7 @@ import {
 import { MemberService } from './member.service';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/get-member.decorator';
 
 @Controller('member')
 export class MemberController {
@@ -26,10 +27,12 @@ export class MemberController {
   //     updateMemberDto,
   //   );
   // }
+
   @Patch()
   @UseGuards(AuthGuard('jwt'))
-  update(@Req() req, @Body() updateMemberDto: UpdateMemberDto) {
-    const memberId = req.user.id;
+  update(@GetUser() member, @Body() updateMemberDto: UpdateMemberDto) {
+    const memberId = member.id;
+    console.log('req.user: ', member);
     // La const memberId sert à recuperer l'id utilisateur
     // qui se trouve dans le Token
     return this.memberService.update(

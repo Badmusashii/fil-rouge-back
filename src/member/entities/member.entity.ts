@@ -18,7 +18,7 @@ export class Member {
   @Column({ length: 255 })
   email: string;
 
-  @Column({ length: 65 })
+  @Column({ length: 60 })
   password: string;
 
   @OneToMany(() => Restaurant, (restaurant) => restaurant.member)

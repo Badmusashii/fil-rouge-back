@@ -4,9 +4,11 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { Member } from 'src/member/entities/member.entity';
 import { Restaurant } from 'src/restaurant/entities/restaurant.entity';
+import { Groupe } from 'src/groupe/entities/groupe.entity';
 
 @Entity()
 export class Review {
@@ -26,4 +28,7 @@ export class Review {
   @ManyToOne(() => Restaurant)
   @JoinColumn({ name: 'idRestaurant' })
   restaurant: Restaurant;
+
+  @OneToMany(() => Groupe, (groupe) => groupe.review)
+  groupe: Groupe[];
 }
