@@ -21,27 +21,42 @@ export class RestaurantService {
     return await this.restaurantsRepository.save(newRestaurant);
   }
 
-  async findAll() {
+ async findAll() {
+    // relations: est ajouter pour recuperer les infos des entité de jointure
+    const allRestaurants = await this.restaurantsRepository.find();
 
-    const allRestaurants = await this.restaurantsRepository.find({relations:["member", "categorie"]});
-    allRestaurants.forEach(restaurant => {
-    delete restaurant.member.email;
-    delete restaurant.member.password;
-    delete restaurant.member.firstname;
-    delete restaurant.member.lastname;
-    delete restaurant.member.id;
-  });
+    // Supprimer les informations sensibles sur l'utilisateur
+    allRestaurants.forEach((restaurant) => {
+      delete restaurant.member.lastname;
+      delete restaurant.member.firstname;
+      delete restaurant.member.email;
+      delete restaurant.member.password;
+    });
+    // -----------------------------------------------------
+
+    return {
+      status: 'success',
+      message: "Le retour de tous les restaurants se trouve dans la Data",
+      data: allRestaurants,
+    };
   }
 
-  async findOne(id: number) {
-    const found = await this.restaurantsRepository.findOne({
-    where: { id:id },
-    relations: ['member', 'categorie']
-  })
-    if(!found){
-      throw new NotFoundException("Le restaurant n'existe pas");
-    }
-    return found;
+ async findOne(id: number) {
+    const restaurant = await this.restaurantsRepository.findOne({
+      where: { id: id },
+    });
+
+    // Suppression des infos sensibles sur l'utilisateur
+    delete restaurant.member.lastname;
+    delete restaurant.member.firstname;
+    delete restaurant.member.email;
+    delete restaurant.member.password;
+
+    return {
+      status: 'success',
+      message: `Le restaurant ${restaurant.name} correspondant à l'ID ${restaurant.id} se trouve dans la Data`,
+      data: restaurant,
+    };
   }
 
   async update(id: number, updateRestaurantDto: UpdateRestaurantDto) {
