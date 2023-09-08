@@ -6,31 +6,39 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('restaurant')
 export class RestaurantController {
   constructor(private readonly restaurantService: RestaurantService) {}
 
   @Post()
-  create(@Body() createRestaurantDto: CreateRestaurantDto) {
-    return this.restaurantService.create(createRestaurantDto);
+  @UseGuards(AuthGuard('jwt'))
+  create(@Request() req, @Body() createRestaurantDto: CreateRestaurantDto) {
+    const member = req.user.id;
+    return this.restaurantService.create(createRestaurantDto, member);
   }
 
   @Get()
+  @UseGuards(AuthGuard('jwt'))
   findAll() {
     return this.restaurantService.findAll();
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'))
   findOne(@Param('id') id: string) {
     return this.restaurantService.findOne(+id);
   }
 
   @Patch(':id')
+  // @UseGuards(AuthGuard('jwt'))
   update(
     @Param('id') id: string,
     @Body() updateRestaurantDto: UpdateRestaurantDto,
@@ -39,6 +47,7 @@ export class RestaurantController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'))
   remove(@Param('id') id: string) {
     return this.restaurantService.remove(+id);
   }

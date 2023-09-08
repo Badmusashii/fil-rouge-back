@@ -1,23 +1,108 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Restaurant } from './entities/restaurant.entity';
+import { Categorie } from 'src/categorie/entities/categorie.entity';
+import { Member } from 'src/member/entities/member.entity';
 
 @Injectable()
 export class RestaurantService {
-  create(createRestaurantDto: CreateRestaurantDto) {
-    return 'This action adds a new restaurant';
+  constructor(
+    @InjectRepository(Restaurant)
+    private readonly restaurantsRespository: Repository<Restaurant>,
+    @InjectRepository(Categorie)
+    private readonly categorieRepository: Repository<Categorie>,
+    @InjectRepository(Member)
+    private readonly memberRepository: Repository<Member>,
+  ) {}
+  async create(createRestaurantDto: CreateRestaurantDto, memberId: number) {
+    const member = await this.memberRepository.findOne({
+      where: { id: memberId },
+    });
+    // const member = memberId;
+    const categorie = await this.categorieRepository.findOne({
+      where: { id: createRestaurantDto.categorieId },
+    });
+    const newRestaurant = this.restaurantsRespository.create({
+      ...createRestaurantDto,
+      member,
+      categorie,
+    });
+
+    return await this.restaurantsRespository.save(newRestaurant);
   }
 
-  findAll() {
-    return `This action returns all restaurant`;
+  async findAll() {
+    // relations: est ajouter pour recuperer les infos des entité de jointure
+    const allRestaurants = await this.restaurantsRespository.find();
+
+    // Supprimer les informations sensibles sur l'utilisateur
+    allRestaurants.forEach((restaurant) => {
+      delete restaurant.member.lastname;
+      delete restaurant.member.firstname;
+      delete restaurant.member.email;
+      delete restaurant.member.password;
+    });
+    // -----------------------------------------------------
+
+    return {
+      status: 'success',
+      message: `Le retour de tous les restaurants se trouve dans la Data`,
+      data: allRestaurants,
+    };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} restaurant`;
+  async findOne(id: number) {
+    const restaurant = await this.restaurantsRespository.findOne({
+      where: { id: id },
+    });
+
+    // Suppression des infos sensibles sur l'utilisateur
+    delete restaurant.member.lastname;
+    delete restaurant.member.firstname;
+    delete restaurant.member.email;
+    delete restaurant.member.password;
+
+    return {
+      status: 'success',
+      message: `Le restaurant ${restaurant.name} correspondant à l'ID ${restaurant.id} se trouve dans la Data`,
+      data: restaurant,
+    };
   }
 
-  update(id: number, updateRestaurantDto: UpdateRestaurantDto) {
-    return `This action updates a #${id} restaurant`;
+  async update(id: number, updateRestaurantDto: UpdateRestaurantDto) {
+    // relations: est ajouter pour recuperer les infos des entité de jointure
+    const restaurant = await this.restaurantsRespository.findOne({
+      where: { id: id },
+    });
+
+    // Cas ou le restaurant est introuvable dans la BDD
+    if (!restaurant) {
+      throw new NotFoundException(`Restaurant with id ${id} not found`);
+    }
+
+    // Suppression des infos sensible sur l'utilisateur
+    delete restaurant.member.lastname;
+    delete restaurant.member.firstname;
+    delete restaurant.member.email;
+    delete restaurant.member.password;
+    // ------------------------------------------------
+
+    // Mettre à jour les champs du restaurant avec les valeurs fournies dans updateRestaurantDto
+    Object.assign(restaurant, updateRestaurantDto);
+
+    // Constante pour le nouveau restaurant creé
+    const updatedRestaurant = await this.restaurantsRespository.save(
+      restaurant,
+    );
+
+    return {
+      status: 'success',
+      message: `Le restaurant ${updatedRestaurant.name} a été bien modifié`,
+      data: updatedRestaurant,
+    };
   }
 
   remove(id: number) {

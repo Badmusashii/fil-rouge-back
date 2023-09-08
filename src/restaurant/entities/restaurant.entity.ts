@@ -23,11 +23,11 @@ export class Restaurant {
   @Column({ type: 'enum', enum: Price })
   price: Price;
 
-  @ManyToOne(() => Member, (member) => member.restaurants)
+  @ManyToOne(() => Member, { eager: true })
   @JoinColumn({ name: 'idMember' })
   member: Member;
 
-  @ManyToOne(() => Categorie)
+  @ManyToOne(() => Categorie, { eager: true })
   @JoinColumn({ name: 'idCategorie' })
   categorie: Categorie;
 }
