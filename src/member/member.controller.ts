@@ -41,4 +41,9 @@ export class MemberController {
       updateMemberDto,
     );
   }
+
+  @Get()
+  findAll() {
+    return this.memberService.findAll();
+  }
 }

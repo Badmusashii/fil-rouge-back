@@ -59,7 +59,7 @@ export class MemberService {
   }
 
   findAll() {
-    return `This action returns all member`;
+    return this.memberRepository.find();
   }
 
   findOne(id: number) {
