@@ -21,11 +21,11 @@ export class Review {
   @Column({ type: 'boolean' })
   vote: boolean;
 
-  @ManyToOne(() => Member)
+  @ManyToOne(() => Member, { eager: true })
   @JoinColumn({ name: 'idMember' })
   member: Member;
 
-  @ManyToOne(() => Restaurant)
+  @ManyToOne(() => Restaurant, { eager: true })
   @JoinColumn({ name: 'idRestaurant' })
   restaurant: Restaurant;
 
