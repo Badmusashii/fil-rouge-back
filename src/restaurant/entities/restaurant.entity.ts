@@ -30,5 +30,4 @@ export class Restaurant {
   @ManyToOne(() => Categorie, { eager: true })
   @JoinColumn({ name: 'idCategorie' })
   categorie: Categorie;
-
 }
