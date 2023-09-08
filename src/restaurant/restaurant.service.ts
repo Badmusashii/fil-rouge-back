@@ -21,16 +21,61 @@ export class RestaurantService {
     return await this.restaurantsRepository.save(newRestaurant);
   }
 
-  findAll() {
-    return `This action returns all restaurant`;
+  async findAll() {
+
+    const allRestaurants = await this.restaurantsRepository.find({relations:["member", "categorie"]});
+    allRestaurants.forEach(restaurant => {
+    delete restaurant.member.email;
+    delete restaurant.member.password;
+    delete restaurant.member.firstname;
+    delete restaurant.member.lastname;
+    delete restaurant.member.id;
+  });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} restaurant`;
+  async findOne(id: number) {
+    const found = await this.restaurantsRepository.findOne({
+    where: { id:id },
+    relations: ['member', 'categorie']
+  })
+    if(!found){
+      throw new NotFoundException("Le restaurant n'existe pas");
+    }
+    return found;
   }
 
-  update(id: number, updateRestaurantDto: UpdateRestaurantDto) {
-    return `This action updates a #${id} restaurant`;
+  async update(id: number, updateRestaurantDto: UpdateRestaurantDto) {
+    // relations: est ajouter pour recuperer les infos des entité de jointure
+    const restaurant = await this.restaurantsRepository.findOne({
+      where: { id: id },
+      relations: ['member', 'categorie'],
+    });
+
+    // Cas ou le restaurant est introuvable dans la BDD
+    if (!restaurant) {
+      throw new NotFoundException(`Restaurant with id ${id} not found`);
+    }
+
+    // Suppression des infos sensible sur l'utilisateur
+    delete restaurant.member.lastname;
+    delete restaurant.member.firstname;
+    delete restaurant.member.email;
+    delete restaurant.member.password;
+    // ------------------------------------------------
+
+    // Mettre à jour les champs du restaurant avec les valeurs fournies dans updateRestaurantDto
+    Object.assign(restaurant, updateRestaurantDto);
+
+    // Constante pour le nouveau restaurant creé
+    const updatedRestaurant = await this.restaurantsRepository.save(
+      restaurant,
+    );
+
+    return {
+      status: 'success',
+      message: `Le restaurant ${updatedRestaurant.name} a été bien modifié`,
+      data: updatedRestaurant,
+    };
   }
 
   async remove(id: number) {
