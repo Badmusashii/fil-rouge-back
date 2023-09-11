@@ -7,8 +7,13 @@ import { CategorieModule } from 'src/categorie/categorie.module';
 import { MemberModule } from 'src/member/member.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Restaurant]), CategorieModule, MemberModule],
+  imports: [
+    TypeOrmModule.forFeature([Restaurant]),
+    CategorieModule,
+    MemberModule,
+  ],
   controllers: [RestaurantController],
   providers: [RestaurantService],
+  exports: [TypeOrmModule],
 })
 export class RestaurantModule {}

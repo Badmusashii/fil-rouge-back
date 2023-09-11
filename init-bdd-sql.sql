@@ -39,8 +39,9 @@ CREATE TABLE review (
 
 CREATE TABLE groupe (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL
-  idAvis INT FOREIGN KEY NOT NULL
+  name VARCHAR(255) NOT NULL,
+  idReview INT NOT NULL,
+  FOREIGN KEY (idReview) REFERENCES review(id)
 );
 
 CREATE TABLE membergroupe (
