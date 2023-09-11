@@ -7,10 +7,4 @@ export class CreateReviewDto {
   @IsBoolean()
   vote: boolean;
 
-  @IsInt()
-  idMember: number;
-
-  @IsInt()
-  idRestaurant: number;
-
 }
