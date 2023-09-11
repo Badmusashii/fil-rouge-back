@@ -3,33 +3,33 @@ import { CreateRestaurantDto } from './dto/create-restaurant.dto';
 import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Restaurant } from './entities/restaurant.entity';
-import { Repository} from 'typeorm';
-import { Categorie } from 'src/categorie/entities/categorie.entity'
+import { Repository } from 'typeorm';
+import { Categorie } from 'src/categorie/entities/categorie.entity';
 import { Member } from 'src/member/entities/member.entity';
 @Injectable()
 export class RestaurantService {
-
   constructor(
-    @InjectRepository(Restaurant) private restaurantsRepository: Repository<Restaurant>, @InjectRepository(Categorie) private categorieRepository: Repository<Categorie>, @InjectRepository(Member) private memberRepository: Repository<Member>,
-  ){}
-  async create(createRestaurantDto: CreateRestaurantDto, member:Member) {
-    
+    @InjectRepository(Restaurant)
+    private restaurantsRepository: Repository<Restaurant>,
+    @InjectRepository(Categorie)
+    private categorieRepository: Repository<Categorie>,
+    @InjectRepository(Member) private memberRepository: Repository<Member>,
+  ) {}
+  async create(createRestaurantDto: CreateRestaurantDto, member: Member) {
     const newRestaurant = this.restaurantsRepository.create({
-      ...createRestaurantDto, member,
+      ...createRestaurantDto,
+      member,
     });
-// Suppression des infos sensibles sur l'utilisateur
+    // Suppression des infos sensibles sur l'utilisateur
     delete newRestaurant.member.lastname;
     delete newRestaurant.member.firstname;
     delete newRestaurant.member.email;
     delete newRestaurant.member.password;
 
-
-
-    
     return await this.restaurantsRepository.save(newRestaurant);
   }
 
- async findAll() {
+  async findAll() {
     // relations: est ajouter pour recuperer les infos des entité de jointure
     const allRestaurants = await this.restaurantsRepository.find();
 
@@ -44,12 +44,12 @@ export class RestaurantService {
 
     return {
       status: 'success',
-      message: "Le retour de tous les restaurants se trouve dans la Data",
+      message: 'Le retour de tous les restaurants se trouve dans la Data',
       data: allRestaurants,
     };
   }
 
- async findOne(id: number) {
+  async findOne(id: number) {
     const restaurant = await this.restaurantsRepository.findOne({
       where: { id: id },
     });
@@ -90,9 +90,7 @@ export class RestaurantService {
     Object.assign(restaurant, updateRestaurantDto);
 
     // Constante pour le nouveau restaurant creé
-    const updatedRestaurant = await this.restaurantsRepository.save(
-      restaurant,
-    );
+    const updatedRestaurant = await this.restaurantsRepository.save(restaurant);
 
     return {
       status: 'success',
@@ -102,15 +100,14 @@ export class RestaurantService {
   }
 
   async remove(id: number) {
-
-    const found = await this.restaurantsRepository.findOneBy({id});
+    const found = await this.restaurantsRepository.findOneBy({ id });
     console.log(found);
 
-    if(!found){
+    if (!found) {
       throw new NotFoundException(`Le restaurant n'existe pas`);
     }
     await this.restaurantsRepository.remove(found);
-  
+
     return `Le restaurant ${found.name} a bien été supprimé`;
   }
 }

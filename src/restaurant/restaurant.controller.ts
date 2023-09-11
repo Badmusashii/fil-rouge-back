@@ -6,7 +6,8 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards, Request
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';
@@ -19,8 +20,8 @@ export class RestaurantController {
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
-  create(@Request() req,  @Body() createRestaurantDto: CreateRestaurantDto) {
-    const memberId = req.user.id;
+  create(@Request() req, @Body() createRestaurantDto: CreateRestaurantDto) {
+    // const memberId = req.user.id;
     const member = req.user;
     return this.restaurantService.create(createRestaurantDto, member);
   }
