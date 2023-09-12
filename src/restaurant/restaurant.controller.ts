@@ -8,8 +8,6 @@ import {
   Delete,
   UseGuards,
   Request,
-  UseGuards,
-  Request,
 } from '@nestjs/common';
 import { RestaurantService } from './restaurant.service';
 import { CreateRestaurantDto } from './dto/create-restaurant.dto';

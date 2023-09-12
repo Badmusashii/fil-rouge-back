@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Request,
+  Req,
+  Put,
 } from '@nestjs/common';
 import { GroupeService } from './groupe.service';
 import { CreateGroupeDto } from './dto/create-groupe.dto';
@@ -21,26 +23,43 @@ export class GroupeController {
   @Post()
   @UseGuards(AuthGuard('jwt'))
   create(@Request() req, @Body() createGroupeDto: CreateGroupeDto) {
-    const member = req.user;
-    return this.groupeService.createAndAssign(createGroupeDto, member);
-  }
-  @Get()
-  findAll() {
-    return this.groupeService.findAll();
+    try {
+      const member = req.user;
+      return this.groupeService.createAndAssign(createGroupeDto, member);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.groupeService.findOne(+id);
+  @UseGuards(AuthGuard('jwt'))
+  findAllUserForGroupe(@Request() req, @Param('id') id: number) {
+    return this.groupeService.findAllUserForGroupe(id, req);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGroupeDto: UpdateGroupeDto) {
-    return this.groupeService.update(+id, updateGroupeDto);
+  @Get()
+  @UseGuards(AuthGuard('jwt'))
+  findAllGroupeForUser(@Request() req) {
+    const memberId = req.user.id;
+    return this.groupeService.findAllGroupeForUser(memberId);
   }
+
+  @Put(':id')
+  @UseGuards(AuthGuard('jwt'))
+  putAnUserInGroupe(@Request() req, @Param('id') groupeId: number) {
+    const member = req.user;
+    return this.groupeService.putAnUserInGroupe(member, groupeId);
+  }
+
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateGroupeDto: UpdateGroupeDto) {
+  //   return this.groupeService.update(+id, updateGroupeDto);
+  // }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.groupeService.remove(+id);
+  @UseGuards(AuthGuard('jwt'))
+  removeAnUserInGroupe(@Request() req, @Param('id') id: string) {
+    const member = req.user;
+    return this.groupeService.removeAndUserInGroupe(+id, member);
   }
 }
