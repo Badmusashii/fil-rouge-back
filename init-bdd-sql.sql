@@ -41,7 +41,7 @@ CREATE TABLE groupe (
   id SERIAL PRIMARY KEY,
   name VARCHAR(255) NOT NULL,
   idreview INT,
-  CONSTRAINT fk_review FOREIGN KEY (idreview) REFERENCES review(id),
+  CONSTRAINT fk_review FOREIGN KEY (idreview) REFERENCES review(id)
 );
 
 CREATE TABLE membergroupe (
@@ -51,4 +51,10 @@ CREATE TABLE membergroupe (
   FOREIGN KEY (idMember) REFERENCES member(id),
   FOREIGN KEY (idGroupe) REFERENCES groupe(id)
 );
+
+INSERT INTO categorie (name) VALUES
+('fast-food'),
+('asiatique'),
+('italien');
+
 
