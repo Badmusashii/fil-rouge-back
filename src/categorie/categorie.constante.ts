@@ -1,1 +1,5 @@
-export const categorie = [{name:"fast-food"}, {name:"asiatique"}, {name:"italien"}]
+export const categorie = [
+  { name: 'fast-food' },
+  { name: 'asiatique' },
+  { name: 'italien' },
+];

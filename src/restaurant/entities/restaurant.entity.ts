@@ -11,9 +11,6 @@ import { Member } from 'src/member/entities/member.entity';
 
 @Entity()
 export class Restaurant {
-  forEach(arg0: Restaurant) {
-    throw new Error('Method not implemented.');
-  }
   @PrimaryGeneratedColumn()
   id: number;
 
