@@ -24,10 +24,10 @@ export class Restaurant {
   price: Price;
 
   @ManyToOne(() => Member, { eager: true })
-  @JoinColumn({ name: 'idMember' })
+  @JoinColumn({ name: 'idmember' })
   member: Member;
 
   @ManyToOne(() => Categorie, { eager: true })
-  @JoinColumn({ name: 'idCategorie' })
+  @JoinColumn({ name: 'idcategorie' })
   categorie: Categorie;
 }

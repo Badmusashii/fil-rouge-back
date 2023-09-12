@@ -48,7 +48,6 @@ export class RestaurantService {
     const restaurant = await this.restaurantsRepository.findOne({
       where: { id: id },
     });
-
     // Suppression des infos sensibles sur l'utilisateur
     delete restaurant.member.lastname;
     delete restaurant.member.firstname;

@@ -21,26 +21,27 @@ CREATE TABLE restaurant (
   name VARCHAR(255) NOT NULL,
   adresse VARCHAR(255) NOT NULL,
   price price NOT NULL,
-  idMember INTEGER NOT NULL,
-  idCategorie INTEGER NOT NULL,
-  CONSTRAINT fk_member FOREIGN KEY (idMember) REFERENCES member(id),
-  CONSTRAINT fk_categorie FOREIGN KEY (idCategorie) REFERENCES categorie(id)
+  idmember INTEGER NOT NULL,
+  idcategorie INTEGER NOT NULL,
+  CONSTRAINT fk_member FOREIGN KEY (idmember) REFERENCES member(id),
+  CONSTRAINT fk_categorie FOREIGN KEY (idcategorie) REFERENCES categorie(id)
 );
 
 CREATE TABLE review (
   id SERIAL PRIMARY KEY,
   review TEXT NOT NULL,
   vote BOOLEAN NOT NULL,
-  idMember INTEGER,
-  idRestaurant INTEGER,
-  FOREIGN KEY (idMember) REFERENCES member(id),
-  FOREIGN KEY (idRestaurant) REFERENCES restaurant(id)
+  idmember INTEGER,
+  idrestaurant INTEGER,
+  FOREIGN KEY (idmember) REFERENCES member(id),
+  FOREIGN KEY (idrestaurant) REFERENCES restaurant(id)
 );
 
 CREATE TABLE groupe (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL
-  idAvis INT FOREIGN KEY NOT NULL
+  name VARCHAR(255) NOT NULL,
+  idreview INT,
+  CONSTRAINT fk_review FOREIGN KEY (idreview) REFERENCES review(id)
 );
 
 CREATE TABLE membergroupe (
@@ -51,3 +52,7 @@ CREATE TABLE membergroupe (
   FOREIGN KEY (idGroupe) REFERENCES groupe(id)
 );
 
+INSERT INTO categorie (name) VALUES
+('fast-food'),
+('asiatique'),
+('italien');

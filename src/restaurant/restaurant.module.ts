@@ -10,5 +10,6 @@ import { MemberModule } from 'src/member/member.module';
   imports: [TypeOrmModule.forFeature([Restaurant]), CategorieModule, MemberModule],
   controllers: [RestaurantController],
   providers: [RestaurantService],
+  exports: [TypeOrmModule.forFeature([Restaurant])]
 })
 export class RestaurantModule {}
