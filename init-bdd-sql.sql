@@ -56,3 +56,9 @@ INSERT INTO categorie (name) VALUES
 ('fast-food'),
 ('asiatique'),
 ('italien');
+
+
+INSERT INTO categorie (name) VALUES
+('fast-food'),
+('asiatique'),
+('italien');
