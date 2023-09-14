@@ -58,7 +58,7 @@ export class GroupeController {
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
-  removeAnUserInGroupe(@Request() req, @Param('id') id: string) {
+  removeAndUserInGroupe(@Request() req, @Param('id') id: string) {
     const member = req.user;
     return this.groupeService.removeAndUserInGroupe(+id, member);
   }
