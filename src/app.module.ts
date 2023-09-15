@@ -25,7 +25,7 @@ import { ConfigModule } from '@nestjs/config';
       // TypeOrm et sa config pour se connecter à la BDD
       type: 'postgres',
       host: process.env.DB_HOST,
-      port: +process.env.DB_PORT,
+      port: Number(process.env.DB_PORT), //possibilité de mettre + à la place de number et des parenthèses
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
