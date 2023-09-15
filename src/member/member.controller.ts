@@ -7,7 +7,7 @@ import {
   Param,
   UseGuards,
   Delete,
-  Req,
+  Request,
 } from '@nestjs/common';
 import { MemberService } from './member.service';
 import { UpdateMemberDto } from './dto/update-member.dto';
@@ -40,6 +40,13 @@ export class MemberController {
       updateMemberDto.currentPassword,
       updateMemberDto,
     );
+  }
+
+   @Get('user')
+  @UseGuards(AuthGuard('jwt'))
+  findOne(@Request() req) {
+    const member = req.user
+    return this.memberService.findOne(member);
   }
 
   @Get()

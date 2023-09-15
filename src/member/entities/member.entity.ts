@@ -1,5 +1,11 @@
-import { Restaurant } from 'src/restaurant/entities/restaurant.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
+import { Groupe } from 'src/groupe/entities/groupe.entity';
 
 @Entity()
 export class Member {
@@ -21,6 +27,17 @@ export class Member {
   @Column({ length: 60 })
   password: string;
 
-  @OneToMany(() => Restaurant, (restaurant) => restaurant.member)
-  restaurants: Restaurant[];
+  @ManyToMany(() => Groupe, (groupe) => groupe.members)
+  @JoinTable({
+    name: 'membergroupe',
+    joinColumn: {
+      name: 'idmember',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'idgroupe',
+      referencedColumnName: 'id',
+    },
+  })
+  groupes: Groupe[];
 }

@@ -21,12 +21,12 @@ export class Review {
   @Column({ type: 'boolean' })
   vote: boolean;
 
-  @ManyToOne(() => Member)
-  @JoinColumn({ name: 'idMember' })
+  @ManyToOne(() => Member, { eager: true })
+  @JoinColumn({ name: 'idmember' })
   member: Member;
 
-  @ManyToOne(() => Restaurant)
-  @JoinColumn({ name: 'idRestaurant' })
+  @ManyToOne(() => Restaurant, { eager: true })
+  @JoinColumn({ name: 'idrestaurant' })
   restaurant: Restaurant;
 
   @OneToMany(() => Groupe, (groupe) => groupe.review)
