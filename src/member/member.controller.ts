@@ -42,10 +42,10 @@ export class MemberController {
     );
   }
 
-   @Get('user')
+  @Get('user')
   @UseGuards(AuthGuard('jwt'))
   findOne(@Request() req) {
-    const member = req.user
+    const member = req.user;
     return this.memberService.findOne(member);
   }
 

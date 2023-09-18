@@ -55,47 +55,50 @@ export class AuthService {
       throw new UnauthorizedException('Probleme dans vos identifiants !');
     }
   }
- 
 
-//   async updatePassword(updateAuthDto:UpdateAuthDto, currentPassword:string,newPassword:string, id:number): Promise<void> {
-//     const member = await this.memberRepository.findOne({where:{id:id}});
+  //   async updatePassword(updateAuthDto:UpdateAuthDto, currentPassword:string,newPassword:string, id:number): Promise<void> {
+  //     const member = await this.memberRepository.findOne({where:{id:id}});
 
-//     if (!member) {
-//      throw new Error('Utilisateur introuvable');
-//     }
+  //     if (!member) {
+  //      throw new Error('Utilisateur introuvable');
+  //     }
 
-//     const isPasswordValid = await bcrypt.compare(currentPassword, member.password);
+  //     const isPasswordValid = await bcrypt.compare(currentPassword, member.password);
 
-//    if (!isPasswordValid) {
-//     throw new Error('L\'ancien mot de passe est incorrect');
-//   }
+  //    if (!isPasswordValid) {
+  //     throw new Error('L\'ancien mot de passe est incorrect');
+  //   }
 
-//   // Implémentez ici la logique pour mettre à jour le mot de passe de l'utilisateur dans la base de données.
-//   // Par exemple, vous pouvez utiliser une bibliothèque de hachage comme bcrypt pour hacher le nouveau mot de passe
-//   // et le stocker dans la base de données.
+  //   // Implémentez ici la logique pour mettre à jour le mot de passe de l'utilisateur dans la base de données.
+  //   // Par exemple, vous pouvez utiliser une bibliothèque de hachage comme bcrypt pour hacher le nouveau mot de passe
+  //   // et le stocker dans la base de données.
 
-//   // Exemple (utilisant bcrypt) :
-//   const hashedPassword = await bcrypt.hash(newPassword, 10); // Hachez le nouveau mot de passe avec un coût de hachage de 10.
+  //   // Exemple (utilisant bcrypt) :
+  //   const hashedPassword = await bcrypt.hash(newPassword, 10); // Hachez le nouveau mot de passe avec un coût de hachage de 10.
 
-//   member.password = hashedPassword;
-//   await this.memberRepository.save(member);
-// }
+  //   member.password = hashedPassword;
+  //   await this.memberRepository.save(member);
+  // }
 
-async comparePasswords(password: string, memberPassword: string): Promise<boolean> {
+  async comparePasswords(
+    password: string,
+    memberPassword: string,
+  ): Promise<boolean> {
     return bcrypt.compare(password, memberPassword);
   }
 
-async update(member:Member, updateDto: UpdateAuthDto){
-  const isPasswordValid = await this.comparePasswords(updateDto.currentPassword, member.password);
-  if (!isPasswordValid) {
+  async update(member: Member, updateDto: UpdateAuthDto) {
+    const isPasswordValid = await this.comparePasswords(
+      updateDto.currentPassword,
+      member.password,
+    );
+    if (!isPasswordValid) {
       throw new Error('Le mot de passe actuel est incorrect');
     }
-   const hashedPassword = await bcrypt.hash(updateDto.newPassword, 10);
-    member.password = hashedPassword; 
+    const hashedPassword = await bcrypt.hash(updateDto.newPassword, 10);
+    member.password = hashedPassword;
     await this.memberRepository.save(member);
 
     return { message: 'Mot de passe mis à jour avec succès.' };
+  }
 }
-}
-
-

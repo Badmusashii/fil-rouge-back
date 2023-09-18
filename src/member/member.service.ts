@@ -62,11 +62,10 @@ export class MemberService {
     return this.memberRepository.find();
   }
 
-  findOne(member:Member) {
-
-   delete member.email
-   delete member.password
-   delete member.id
+  findOne(member: Member) {
+    delete member.email;
+    delete member.password;
+    delete member.id;
     return member;
   }
 
