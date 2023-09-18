@@ -20,11 +20,6 @@ export class RestaurantService {
       ...createRestaurantDto,
       member,
     });
-    // Suppression des infos sensibles sur l'utilisateur
-    delete newRestaurant.member.lastname;
-    delete newRestaurant.member.firstname;
-    delete newRestaurant.member.email;
-    delete newRestaurant.member.password;
 
     return await this.restaurantsRepository.save(newRestaurant);
   }
