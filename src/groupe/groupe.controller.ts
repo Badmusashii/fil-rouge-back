@@ -51,11 +51,6 @@ export class GroupeController {
     return this.groupeService.putAnUserInGroupe(member, groupeId);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateGroupeDto: UpdateGroupeDto) {
-  //   return this.groupeService.update(+id, updateGroupeDto);
-  // }
-
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
   removeAnUserInGroupe(@Request() req, @Param('id') id: string) {
