@@ -26,23 +26,11 @@ export class AuthController {
     return this.authService.login(loginDto);
   }
 
-  //  @Patch('update-password/:id')
-  //   async updatePassword(
-  //     @Param() memberId: number, // Obtenez l'ID du membre à partir de la route.
-  //     @Body() updateAuthDto:UpdateAuthDto,
-  //   ): Promise<any> {
-  //      const { currentPassword, newPassword } = updateAuthDto;
-  //     // Appelez la méthode du service pour mettre à jour le mot de passe.
-  //     await this.authService.updatePassword(updateAuthDto, currentPassword, newPassword, memberId);
-
-  //     return { message: 'Mot de passe mis à jour avec succès.' };
-  //   }
-
   @Patch('update')
   @UseGuards(AuthGuard('jwt'))
   update(@Request() req, @Body() updateDto: UpdateAuthDto) {
     const member = req.user;
-
+    console.log(member);
     return this.authService.update(member, updateDto);
   }
 }

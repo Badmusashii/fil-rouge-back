@@ -5,7 +5,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Member } from 'src/member/entities/member.entity';
@@ -89,10 +88,14 @@ export class AuthService {
   }
 
   async update(member: Member, updateDto: UpdateAuthDto) {
+    console.log('memberpass ' + member.password);
+    console.log('update ' + updateDto.newPassword);
+    console.log(updateDto);
     const isPasswordValid = await this.comparePasswords(
       updateDto.currentPassword,
       member.password,
     );
+    console.log(isPasswordValid);
     if (!isPasswordValid) {
       throw new Error('Le mot de passe actuel est incorrect');
     }

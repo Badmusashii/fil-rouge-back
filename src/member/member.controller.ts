@@ -8,6 +8,7 @@ import {
   UseGuards,
   Delete,
   Request,
+  Query,
 } from '@nestjs/common';
 import { MemberService } from './member.service';
 import { UpdateMemberDto } from './dto/update-member.dto';
@@ -30,9 +31,9 @@ export class MemberController {
 
   @Patch()
   @UseGuards(AuthGuard('jwt'))
-  update(@GetUser() member, @Body() updateMemberDto: UpdateMemberDto) {
-    const memberId = member.id;
-    console.log('req.user: ', member);
+  update(@Request() req, @Body() updateMemberDto: UpdateMemberDto) {
+    const memberId = req.user.id;
+    console.log('req.user: ', memberId);
     // La const memberId sert à recuperer l'id utilisateur
     // qui se trouve dans le Token
     return this.memberService.update(
@@ -48,9 +49,21 @@ export class MemberController {
     const member = req.user;
     return this.memberService.findOne(member);
   }
+  @Get('email')
+  @UseGuards(AuthGuard('jwt'))
+  findOneByEmail(@Query('email') email: string) {
+    return this.memberService.findOneByEmail(email);
+  }
 
   @Get()
   findAll() {
     return this.memberService.findAll();
+  }
+
+  @Delete()
+  @UseGuards(AuthGuard('jwt'))
+  remove(@Request() req): Promise<void> {
+    const member = req.user;
+    return this.memberService.remove(member);
   }
 }

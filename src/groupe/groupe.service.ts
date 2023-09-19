@@ -3,6 +3,7 @@ import {
   ForbiddenException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateGroupeDto } from './dto/create-groupe.dto';
 import { UpdateGroupeDto } from './dto/update-groupe.dto';
@@ -11,6 +12,7 @@ import { Groupe } from './entities/groupe.entity';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EntityManager } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class GroupeService {
@@ -18,7 +20,8 @@ export class GroupeService {
     @InjectRepository(Groupe)
     private groupeRepository: Repository<Groupe>,
     @InjectRepository(Member)
-    private memberRepository: Repository<Member>, // @InjectEntityManager() private readonly entityManager: EntityManager,
+    private memberRepository: Repository<Member>,
+    private jwt: JwtService,
   ) {}
 
   async createAndAssign(createGroupeDto: CreateGroupeDto, member: Member) {
@@ -149,6 +152,22 @@ export class GroupeService {
         (g) => g.id !== groupe.id,
       );
       await this.memberRepository.save(existingMember);
+    }
+  }
+
+  async putAnUserInGroupeWithToken(token: string, groupeId: number) {
+    try {
+      // Valider le token
+      const payload = await this.jwt.verifyAsync(token);
+      const memberFromValidatedToken = payload.userId; // à adapter en fonction de votre payload
+      // Appeler votre méthode existante
+      const member = await this.memberRepository.findOne({
+        where: { id: memberFromValidatedToken },
+      });
+      return this.putAnUserInGroupe(member, +groupeId);
+    } catch (e) {
+      // Token invalide
+      throw new UnauthorizedException('Token invalide');
     }
   }
 }
