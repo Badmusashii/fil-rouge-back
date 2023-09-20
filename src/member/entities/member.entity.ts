@@ -4,8 +4,10 @@ import {
   Column,
   ManyToMany,
   JoinTable,
+  OneToMany,
 } from 'typeorm';
 import { Groupe } from 'src/groupe/entities/groupe.entity';
+import { Review } from 'src/review/entities/review.entity';
 
 @Entity()
 export class Member {
@@ -26,6 +28,9 @@ export class Member {
 
   @Column({ length: 60 })
   password: string;
+
+  @OneToMany(() => Review, (review) => review.member)
+  reviews: Review[];
 
   @ManyToMany(() => Groupe, (groupe) => groupe.members)
   @JoinTable({
