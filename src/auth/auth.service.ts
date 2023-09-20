@@ -88,10 +88,14 @@ export class AuthService {
   }
 
   async update(member: Member, updateDto: UpdateAuthDto) {
+    console.log('memberpass ' + member.password);
+    console.log('update ' + updateDto.newPassword);
+    console.log(updateDto);
     const isPasswordValid = await this.comparePasswords(
       updateDto.currentPassword,
       member.password,
     );
+    console.log(isPasswordValid);
     if (!isPasswordValid) {
       throw new Error('Le mot de passe actuel est incorrect');
     }

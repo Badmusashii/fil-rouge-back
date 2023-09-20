@@ -5,6 +5,8 @@
 
 export class UpdateMemberDto {
   username?: string;
+  lastname?: string;
+  firstname?: string;
   email?: string;
   currentPassword?: string;
   password?: string;

@@ -2,7 +2,9 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
+  OnModuleInit,
 } from '@nestjs/common';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
@@ -10,14 +12,20 @@ import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Member } from './entities/member.entity';
 import { Repository } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
 import { CreateMemberResponse } from 'src/interfaces/createMemberResponse';
 
 @Injectable()
-export class MemberService {
+export class MemberService implements OnModuleInit {
   constructor(
     @InjectRepository(Member)
     private readonly memberRepository: Repository<Member>,
+    private jwt: JwtService,
   ) {}
+
+  onModuleInit() {
+    console.log('le .env ' + process.env.ACCESS_TOKEN_SECRET);
+  }
 
   async update(
     id: number,
@@ -68,9 +76,30 @@ export class MemberService {
     delete member.id;
     return member;
   }
+  async findOneByEmail(email: string) {
+    const futurMember = await this.memberRepository.findOne({
+      where: { email: email },
+    });
+    console.log(futurMember);
+    if (futurMember) {
+      const payload = { userId: futurMember.id };
+      const token = this.jwt.sign(payload, { expiresIn: '48h' });
+      delete futurMember.password;
+      delete futurMember.email;
 
-  remove(id: number) {
-    return `This action removes a #${id} member`;
+      return { futurMember, token };
+    } else {
+      return false;
+    }
+  }
+
+  async remove(member: Member) {
+    const result = await this.memberRepository.delete(member.id);
+    if (result.affected === 0) {
+      throw new NotFoundException(
+        `Le membre ${member.username} n'a pas été trouver`,
+      );
+    }
   }
   private async verifyPassword(
     plainTextPassword: string,
