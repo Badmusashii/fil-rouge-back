@@ -10,6 +10,7 @@ import {
   Request,
   Req,
   Put,
+  Query,
 } from '@nestjs/common';
 import { GroupeService } from './groupe.service';
 import { CreateGroupeDto } from './dto/create-groupe.dto';
@@ -51,10 +52,13 @@ export class GroupeController {
     return this.groupeService.putAnUserInGroupe(member, groupeId);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateGroupeDto: UpdateGroupeDto) {
-  //   return this.groupeService.update(+id, updateGroupeDto);
-  // }
+  @Put('verifier/:id')
+  putAnUserInGroupeWithQueryToken(
+    @Query('token') token: string,
+    @Param('id') groupeId: number,
+  ) {
+    return this.groupeService.putAnUserInGroupeWithToken(token, groupeId);
+  }
 
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
