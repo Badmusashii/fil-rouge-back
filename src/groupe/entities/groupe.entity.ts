@@ -6,6 +6,7 @@ import {
   ManyToOne,
   JoinColumn,
   JoinTable,
+  OneToMany,
 } from 'typeorm';
 import { Member } from 'src/member/entities/member.entity';
 import { Review } from 'src/review/entities/review.entity';
@@ -32,7 +33,17 @@ export class Groupe {
   })
   members: Member[];
 
-  @ManyToOne(() => Review, (review) => review.groupe)
-  @JoinColumn({ name: 'idreview' })
-  review: Review;
+  @ManyToMany(() => Review, (review) => review.groupes)
+  @JoinTable({
+    name: 'review_groupe',
+    joinColumn: {
+      name: 'idgroupe',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'idreview',
+      referencedColumnName: 'id',
+    },
+  })
+  reviews: Review[];
 }

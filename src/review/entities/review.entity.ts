@@ -5,6 +5,8 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Member } from 'src/member/entities/member.entity';
 import { Restaurant } from 'src/restaurant/entities/restaurant.entity';
@@ -29,6 +31,17 @@ export class Review {
   @JoinColumn({ name: 'idrestaurant' })
   restaurant: Restaurant;
 
-  @OneToMany(() => Groupe, (groupe) => groupe.review)
-  groupe: Groupe[];
+  @ManyToMany(() => Groupe, (groupe) => groupe.reviews)
+  @JoinTable({
+    name: 'review_groupe',
+    joinColumn: {
+      name: 'idreview',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'idgroupe',
+      referencedColumnName: 'id',
+    },
+  })
+  groupes: Groupe[];
 }

@@ -5,5 +5,7 @@ export class CreateReviewDto {
   review: string;
 
   @IsBoolean()
-  vote: boolean;
+  vote?: boolean;
+
+  groupe?: number[];
 }

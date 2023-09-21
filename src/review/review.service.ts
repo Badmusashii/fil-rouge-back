@@ -25,6 +25,7 @@ export class ReviewService {
     member: Member,
     idRestaurant: number,
   ) {
+    console.log(member);
     const restaurant = await this.restaurantRespository.findOne({
       where: { id: idRestaurant },
     });
