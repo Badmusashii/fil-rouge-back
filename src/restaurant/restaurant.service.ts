@@ -7,8 +7,7 @@ import { Repository } from 'typeorm';
 import { Categorie } from 'src/categorie/entities/categorie.entity';
 import { Member } from 'src/member/entities/member.entity';
 import { Review } from 'src/review/entities/review.entity';
-import { Groupe } from 'src/groupe/entities/groupe.entity';
-import { GroupeService } from 'src/groupe/groupe.service';
+
 @Injectable()
 export class RestaurantService {
   constructor(
@@ -44,6 +43,7 @@ export class RestaurantService {
         const review = new Review();
         review.review = reviewDto.review;
         review.member = member;
+        review.groupes = reviewDto.groupes;
         return review;
       });
     }

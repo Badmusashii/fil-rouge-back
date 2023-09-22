@@ -1,4 +1,5 @@
 import { IsBoolean, IsInt, IsNotEmpty } from 'class-validator';
+import { Groupe } from 'src/groupe/entities/groupe.entity';
 
 export class CreateReviewDto {
   @IsNotEmpty()
@@ -7,5 +8,5 @@ export class CreateReviewDto {
   @IsBoolean()
   vote?: boolean;
 
-  groupe?: number[];
+  groupes?: Groupe[];
 }

@@ -34,16 +34,16 @@ export class Groupe {
   members: Member[];
 
   @ManyToMany(() => Review, (review) => review.groupes)
-  @JoinTable({
-    name: 'review_groupe',
-    joinColumn: {
-      name: 'idgroupe',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'idreview',
-      referencedColumnName: 'id',
-    },
-  })
+  // @JoinTable({
+  //   name: 'review_groupe',
+  //   joinColumn: {
+  //     name: 'idgroupe',
+  //     referencedColumnName: 'id',
+  //   },
+  //   inverseJoinColumn: {
+  //     name: 'idreview',
+  //     referencedColumnName: 'id',
+  //   },
+  // })
   reviews: Review[];
 }

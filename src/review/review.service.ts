@@ -10,6 +10,7 @@ import { Review } from './entities/review.entity';
 import { Repository } from 'typeorm';
 import { Member } from 'src/member/entities/member.entity';
 import { Restaurant } from 'src/restaurant/entities/restaurant.entity';
+import { Groupe } from 'src/groupe/entities/groupe.entity';
 
 @Injectable()
 export class ReviewService {

@@ -31,7 +31,7 @@ export class Review {
   @JoinColumn({ name: 'idrestaurant' })
   restaurant: Restaurant;
 
-  @ManyToMany(() => Groupe, (groupe) => groupe.reviews)
+  @ManyToMany(() => Groupe, (groupe) => groupe.reviews, { cascade: true })
   @JoinTable({
     name: 'review_groupe',
     joinColumn: {
