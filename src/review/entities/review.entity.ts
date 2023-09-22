@@ -23,11 +23,11 @@ export class Review {
   @Column({ type: 'boolean' })
   vote: boolean;
 
-  @ManyToOne(() => Member, { eager: true })
+  @ManyToOne(() => Member, (m) => m.reviews, { eager: false })
   @JoinColumn({ name: 'idmember' })
   member: Member;
 
-  @ManyToOne(() => Restaurant, { eager: true })
+  @ManyToOne(() => Restaurant)
   @JoinColumn({ name: 'idrestaurant' })
   restaurant: Restaurant;
 

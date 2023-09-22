@@ -5,10 +5,12 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  OneToMany,
 } from 'typeorm';
 import { Price } from 'src/types/enumPrice';
 import { Categorie } from 'src/categorie/entities/categorie.entity';
 import { Member } from 'src/member/entities/member.entity';
+import { Review } from 'src/review/entities/review.entity';
 import { Review } from 'src/review/entities/review.entity';
 
 @Entity()
