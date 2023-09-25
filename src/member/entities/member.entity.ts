@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Groupe } from 'src/groupe/entities/groupe.entity';
 import { Review } from 'src/review/entities/review.entity';
+import { ReviewVote } from 'src/review_votes/entities/review_vote.entity';
 
 @Entity()
 export class Member {
@@ -31,6 +32,9 @@ export class Member {
 
   @OneToMany(() => Review, (review) => review.member)
   reviews: Review[];
+
+  @OneToMany(() => ReviewVote, (reviewVote) => reviewVote.member)
+  reviewVotes: ReviewVote[];
 
   @ManyToMany(() => Groupe, (groupe) => groupe.members)
   @JoinTable({

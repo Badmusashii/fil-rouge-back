@@ -20,8 +20,8 @@ export class Review {
   @Column({ type: 'text' })
   review: string;
 
-  @Column({ type: 'boolean' })
-  vote: boolean;
+  // @Column({ type: 'boolean' })
+  // vote: boolean;
 
   @ManyToOne(() => Member, (m) => m.reviews, { eager: false })
   @JoinColumn({ name: 'idmember' })
