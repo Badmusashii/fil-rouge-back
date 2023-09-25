@@ -37,7 +37,7 @@ export class AuthService {
       delete createdMember.password;
       return createdMember;
     } catch (err) {
-      if (err.code === '23505') { 
+      if (err.code === '23505') {
         throw new ConflictException('Ce pseudo existe deja');
       } else {
         throw new InternalServerErrorException();
@@ -45,15 +45,12 @@ export class AuthService {
     }
   }
   async login(loginDto: LoginDto) {
-    const { username, password } = loginDto;
-    const member = await this.memberRepository.findOneBy({ username });
-    console.log("je suis dans authservice et je log member : ", member);
-    
+    const { email, password } = loginDto;
+    const member = await this.memberRepository.findOneBy({ email });
     if (member && (await bcrypt.compare(password, member.password))) {
-      const payload = { username, sub: member.id };
+      const payload = { email, sub: member.id };
       const accessToken = this.jwtService.sign(payload);
       return { accessToken };
-    
     } else {
       throw new UnauthorizedException('Probleme dans vos identifiants !');
     }
