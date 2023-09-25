@@ -60,6 +60,10 @@ export class ReviewVotesService {
     newVote.thumbs_up = createReviewVoteDto.thumbs_up;
     newVote.thumbs_down = createReviewVoteDto.thumbs_down;
 
+    console.log('idMember from token:', newVote.idMember);
+    console.log('idRestaurant:', newVote.idRestaurant);
+    console.log('thumbs_up:', newVote.thumbs_up);
+
     return await this.reviewvoteRepository.save(newVote);
   }
 

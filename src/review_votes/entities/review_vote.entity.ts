@@ -4,24 +4,25 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   Unique,
+  JoinColumn,
 } from 'typeorm';
 import { Member } from 'src/member/entities/member.entity';
 import { Review } from 'src/review/entities/review.entity';
 import { Restaurant } from 'src/restaurant/entities/restaurant.entity';
 
-@Entity()
+@Entity('review_votes')
 @Unique(['idRestaurant', 'idMember'])
 export class ReviewVote {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ name: 'idReview' })
   idReview: number;
 
-  @Column()
+  @Column({ name: 'idRestaurant' })
   idRestaurant: number;
 
-  @Column()
+  @Column({ name: 'idMember' })
   idMember: number;
 
   @Column({ type: 'boolean' })
@@ -31,6 +32,7 @@ export class ReviewVote {
   thumbs_down: boolean;
 
   @ManyToOne(() => Review, (review) => review.id)
+  @JoinColumn({ name: 'idReview' })
   review: Review;
 
   @ManyToOne(() => Restaurant, (restaurant) => restaurant.id)

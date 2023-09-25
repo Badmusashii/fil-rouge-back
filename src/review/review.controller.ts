@@ -30,8 +30,6 @@ export class ReviewController {
     return this.reviewService.create(createReviewDto, member, idRestaurant);
   }
 
-  
-
   @Get('restaurant/:id')
   @UseGuards(AuthGuard('jwt'))
   async findAllByRestaurantId(@Param('id') id: number) {
