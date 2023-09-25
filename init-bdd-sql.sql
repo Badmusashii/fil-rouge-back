@@ -40,9 +40,7 @@ CREATE TABLE review (
 
 CREATE TABLE groupe (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  idreview INT,
-  CONSTRAINT fk_review FOREIGN KEY (idreview) REFERENCES review(id)
+  name VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE membergroupe (
@@ -53,7 +51,22 @@ CREATE TABLE membergroupe (
   FOREIGN KEY (idGroupe) REFERENCES groupe(id)
 );
 
+CREATE TABLE review_groupe (
+  id SERIAL PRIMARY KEY,
+  idReview INTEGER,
+  idGroupe INTEGER,
+  FOREIGN KEY (idReview) REFERENCES review(id),
+  FOREIGN KEY (idGroupe) REFERENCES groupe(id)
+);
+
 INSERT INTO categorie (name) VALUES
 ('fast-food'),
-('asiatique'),
-('italien');
+('chinois'),
+('japonais'),
+('coreen'),
+('italien'),
+('gastronomique'),
+('indien'),
+('Poissons et fruits de mer'),
+('Végétarien'),
+('Autre');

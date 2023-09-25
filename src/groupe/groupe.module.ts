@@ -21,5 +21,6 @@ import { MemberModule } from 'src/member/member.module';
   ],
   controllers: [GroupeController],
   providers: [GroupeService],
+  exports: [GroupeService],
 })
 export class GroupeModule {}

@@ -10,9 +10,11 @@ import { Review } from './entities/review.entity';
 import { Repository } from 'typeorm';
 import { Member } from 'src/member/entities/member.entity';
 import { Restaurant } from 'src/restaurant/entities/restaurant.entity';
+import { Groupe } from 'src/groupe/entities/groupe.entity';
 
 @Injectable()
 export class ReviewService {
+  
   constructor(
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,
@@ -25,6 +27,7 @@ export class ReviewService {
     member: Member,
     idRestaurant: number,
   ) {
+    console.log(member);
     const restaurant = await this.restaurantRespository.findOne({
       where: { id: idRestaurant },
     });
@@ -82,6 +85,10 @@ export class ReviewService {
       message: `Les reviews pour le restaurant avec l'id ${id} ont été trouvées.`,
       data: reviews,
     };
+  }
+
+  async findAll(){
+    return await this.reviewRepository.find();
   }
 
   async findOne(id: number) {

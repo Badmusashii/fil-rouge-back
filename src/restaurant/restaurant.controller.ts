@@ -21,7 +21,8 @@ export class RestaurantController {
   @Post()
   @UseGuards(AuthGuard('jwt'))
   create(@Request() req, @Body() createRestaurantDto: CreateRestaurantDto) {
-    const memberId = req.user.id;
+    // const memberId = req.user.id;
+    console.log(createRestaurantDto);
     const member = req.user;
     
     return this.restaurantService.create(createRestaurantDto, member);

@@ -4,10 +4,12 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { Price } from 'src/types/enumPrice';
 import { Categorie } from 'src/categorie/entities/categorie.entity';
 import { Member } from 'src/member/entities/member.entity';
+import { Review } from 'src/review/entities/review.entity';
 
 @Entity()
 export class Restaurant {
@@ -30,4 +32,7 @@ export class Restaurant {
   @ManyToOne(() => Categorie, { eager: true })
   @JoinColumn({ name: 'idcategorie' })
   categorie: Categorie;
+
+  @OneToMany(() => Review, (review) => review.restaurant, { cascade: true })
+  reviews: Review[];
 }

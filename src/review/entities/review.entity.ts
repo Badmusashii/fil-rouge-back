@@ -5,6 +5,8 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Member } from 'src/member/entities/member.entity';
 import { Restaurant } from 'src/restaurant/entities/restaurant.entity';
@@ -21,14 +23,25 @@ export class Review {
   @Column({ type: 'boolean' })
   vote: boolean;
 
-  @ManyToOne(() => Member, { eager: true })
+  @ManyToOne(() => Member, (m) => m.reviews, { eager: false })
   @JoinColumn({ name: 'idmember' })
   member: Member;
 
-  @ManyToOne(() => Restaurant, { eager: true })
+  @ManyToOne(() => Restaurant)
   @JoinColumn({ name: 'idrestaurant' })
   restaurant: Restaurant;
 
-  @OneToMany(() => Groupe, (groupe) => groupe.review)
-  groupe: Groupe[];
+  @ManyToMany(() => Groupe, (groupe) => groupe.reviews, { cascade: true })
+  @JoinTable({
+    name: 'review_groupe',
+    joinColumn: {
+      name: 'idreview',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'idgroupe',
+      referencedColumnName: 'id',
+    },
+  })
+  groupes: Groupe[];
 }

@@ -147,7 +147,6 @@ export class GroupeService {
     if (!isAlreadyInGroup) {
       throw new BadRequestException("Vous n'appartenez pas à ce groupe.");
     } else {
-      // existingMember.groupes.(groupe);
       existingMember.groupes = existingMember.groupes.filter(
         (g) => g.id !== groupe.id,
       );
@@ -159,8 +158,15 @@ export class GroupeService {
     try {
       // Valider le token
       const payload = await this.jwt.verifyAsync(token);
-      const memberFromValidatedToken = payload.userId; // à adapter en fonction de votre payload
-      // Appeler votre méthode existante
+      let memberFromValidatedToken;
+      if (payload.sub) {
+        memberFromValidatedToken = payload.sub;
+      } else if (payload.userId) {
+        memberFromValidatedToken = payload.userId;
+      }
+      console.log('Payload:', payload);
+      console.log('Member from validated token:', memberFromValidatedToken);
+
       const member = await this.memberRepository.findOne({
         where: { id: memberFromValidatedToken },
       });

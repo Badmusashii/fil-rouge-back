@@ -26,8 +26,11 @@ export class ReviewController {
     @Body() createReviewDto: CreateReviewDto,
   ) {
     const member = req.user;
+    console.log(member);
     return this.reviewService.create(createReviewDto, member, idRestaurant);
   }
+
+  
 
   @Get('restaurant/:id')
   @UseGuards(AuthGuard('jwt'))
@@ -48,8 +51,8 @@ export class ReviewController {
     @Param('id') id: string,
     @Body() updateReviewDto: UpdateReviewDto,
   ) {
-    const member = req.user;
-    return this.reviewService.update(+id, updateReviewDto, member);
+    const memberId = req.user.id;
+    return this.reviewService.update(+id, updateReviewDto, memberId);
   }
 
   @Delete(':id')

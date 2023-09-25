@@ -6,6 +6,7 @@ import { Restaurant } from './entities/restaurant.entity';
 import { Repository } from 'typeorm';
 import { Categorie } from 'src/categorie/entities/categorie.entity';
 import { Member } from 'src/member/entities/member.entity';
+import { Review } from 'src/review/entities/review.entity';
 
 @Injectable()
 export class RestaurantService {
@@ -17,13 +18,38 @@ export class RestaurantService {
     @InjectRepository(Member) private memberRepository: Repository<Member>,
     
   ) {}
-  async create(createRestaurantDto: CreateRestaurantDto, member: Member) {
-    const newRestaurant = this.restaurantsRepository.create({
-      ...createRestaurantDto,
-      member, 
-    });
+  // async create(createRestaurantDto: CreateRestaurantDto, member: Member) {
+  //   const newRestaurant = this.restaurantsRepository.create({
+  //     ...createRestaurantDto,
+  //     member,
+  //   });
 
-    return await this.restaurantsRepository.save(newRestaurant);
+  //   return await this.restaurantsRepository.save(newRestaurant);
+  // }
+
+  async create(
+    createRestaurantDto: CreateRestaurantDto,
+    member: Member,
+  ): Promise<Restaurant> {
+    const newRestaurant = new Restaurant();
+    newRestaurant.name = createRestaurantDto.name;
+    newRestaurant.adresse = createRestaurantDto.adresse;
+    newRestaurant.price = createRestaurantDto.price;
+    newRestaurant.categorie = createRestaurantDto.categorie;
+    newRestaurant.member = member;
+
+    // Ajoute l'id du membre à chaque review dans le DTO
+    if (createRestaurantDto.reviews) {
+      newRestaurant.reviews = createRestaurantDto.reviews.map((reviewDto) => {
+        const review = new Review();
+        review.review = reviewDto.review;
+        review.member = member;
+        review.groupes = reviewDto.groupes;
+        return review;
+      });
+    }
+
+    return this.restaurantsRepository.save(newRestaurant);
   }
 
   async findAll() {
