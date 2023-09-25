@@ -9,6 +9,7 @@ CREATE TABLE member (
   password VARCHAR(60) NOT NULL
 );
 
+
 CREATE TYPE price AS ENUM ('€', '€€', '€€€');
 
 CREATE TABLE categorie (

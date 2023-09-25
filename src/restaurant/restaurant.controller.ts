@@ -16,13 +16,14 @@ import { AuthGuard } from '@nestjs/passport';
 
 @Controller('restaurant')
 export class RestaurantController {
-  constructor(private readonly restaurantService: RestaurantService) {}
+  constructor(private readonly restaurantService: RestaurantService, ) {}
 
   @Post()
   @UseGuards(AuthGuard('jwt'))
   create(@Request() req, @Body() createRestaurantDto: CreateRestaurantDto) {
     const memberId = req.user.id;
     const member = req.user;
+    
     return this.restaurantService.create(createRestaurantDto, member);
   }
 
