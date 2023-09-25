@@ -46,7 +46,10 @@ export class AuthService {
   }
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
-    const member = await this.memberRepository.findOneBy({ email });
+    const member = await this.memberRepository.findOne({
+      where: { email: email },
+    });
+    console.log('cote log meth ' + member);
     if (member && (await bcrypt.compare(password, member.password))) {
       const payload = { email, sub: member.id };
       const accessToken = this.jwtService.sign(payload);
