@@ -5,7 +5,7 @@ CREATE TABLE member (
   lastname VARCHAR(255) NOT NULL,
   firstname VARCHAR(255) NOT NULL,
   username VARCHAR(255) UNIQUE NOT NULL,
-  email VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
   password VARCHAR(60) NOT NULL
 );
 
