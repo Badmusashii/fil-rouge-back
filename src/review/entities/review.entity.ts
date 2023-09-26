@@ -11,6 +11,7 @@ import {
 import { Member } from 'src/member/entities/member.entity';
 import { Restaurant } from 'src/restaurant/entities/restaurant.entity';
 import { Groupe } from 'src/groupe/entities/groupe.entity';
+import { ReviewVote } from 'src/review_votes/entities/review_vote.entity';
 
 @Entity()
 export class Review {
@@ -44,4 +45,7 @@ export class Review {
     },
   })
   groupes: Groupe[];
+
+  @OneToMany(() => ReviewVote, (reviewVote) => reviewVote.review)
+  reviewVotes: ReviewVote[];
 }

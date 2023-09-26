@@ -5,7 +5,7 @@ CREATE TABLE member (
   lastname VARCHAR(255) NOT NULL,
   firstname VARCHAR(255) NOT NULL,
   username VARCHAR(255) UNIQUE NOT NULL,
-  email VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
   password VARCHAR(60) NOT NULL
 );
 
@@ -30,8 +30,8 @@ CREATE TABLE restaurant (
 CREATE TABLE review (
   id SERIAL PRIMARY KEY,
   review TEXT NOT NULL,
-  idmember INTEGER,
-  idrestaurant INTEGER,
+  idmember INTEGER NOT NULL,
+  idrestaurant INTEGER NOT NULL,
   FOREIGN KEY (idmember) REFERENCES member(id),
   FOREIGN KEY (idrestaurant) REFERENCES restaurant(id)
 );

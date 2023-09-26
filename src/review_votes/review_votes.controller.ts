@@ -24,6 +24,14 @@ export class ReviewVotesController {
     return this.reviewVotesService.createVote(req.user, createReviewVoteDto);
   }
 
+  @Get(':id/votes')
+  @UseGuards(AuthGuard('jwt'))
+  async getVotes(@Param('id') restaurantId: number) {
+    const { thumbsUp, thumbsDown } =
+      await this.reviewVotesService.getThumbsUpDown(restaurantId);
+    return { thumbsUp, thumbsDown };
+  }
+
   @Get()
   findAll() {
     return this.reviewVotesService.findAll();
