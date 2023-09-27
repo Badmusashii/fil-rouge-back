@@ -37,10 +37,18 @@ export class ReviewController {
     return await this.reviewService.findAllByRestaurantId(+id);
   }
 
-  @Get(':id')
+  @Get('review/:id')
   @UseGuards(AuthGuard('jwt'))
   findOne(@Param('id') id: string) {
     return this.reviewService.findOne(+id);
+  }
+
+  @Get('byMemberGroups')
+  @UseGuards(AuthGuard('jwt'))
+  async findRestaurantsByMemberGroups(@Request() req) {
+    const memberId = req.user.id;
+    console.log('memberId coté controllezur ' + memberId);
+    return await this.reviewService.findRestaurantsByMemberGroups(memberId);
   }
 
   @Get('countVotes/:restaurantId')

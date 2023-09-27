@@ -11,10 +11,12 @@ import { Repository } from 'typeorm';
 import { Member } from 'src/member/entities/member.entity';
 import { Restaurant } from 'src/restaurant/entities/restaurant.entity';
 import { Groupe } from 'src/groupe/entities/groupe.entity';
+import { GroupeService } from 'src/groupe/groupe.service';
 
 @Injectable()
 export class ReviewService {
   constructor(
+    private groupeService: GroupeService,
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,
     @InjectRepository(Restaurant)
@@ -191,6 +193,33 @@ export class ReviewService {
     });
 
     return { thumbsUp: thumbsUpCount, thumbsDown: thumbsDownCount };
+  }
+
+  async findRestaurantsByMemberGroups(memberId: number) {
+    console.log('coté service ' + memberId);
+    if (isNaN(memberId)) {
+      throw new Error('MemberId est invalide');
+    }
+    // Obtenir tous les groupes pour ce membre
+    const groups = await this.groupeService.findAllGroupeForUser(memberId);
+    const restaurantsByGroup = {};
+
+    // Parcourir chaque groupe pour trouver les restaurants associés
+    for (const group of groups) {
+      const reviews = await this.reviewRepository.find({
+        where: { groupe: { id: group.id } }, // Trouver les reviews par le groupe
+        relations: ['restaurant'], // Charger les relations avec les restaurants
+      });
+
+      // Extraire les restaurants uniques de ces reviews
+      const uniqueRestaurants = Array.from(
+        new Set(reviews.map((r) => r.restaurant.id)),
+      ).map((id) => reviews.find((r) => r.restaurant.id === id).restaurant);
+
+      restaurantsByGroup[group.id] = uniqueRestaurants;
+    }
+
+    return restaurantsByGroup;
   }
 
   async remove(id: number) {
