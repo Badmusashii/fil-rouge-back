@@ -107,17 +107,18 @@ export class RestaurantService {
 
     if (createRestaurantDto.reviews && createRestaurantDto.reviews.length > 0) {
       for (const reviewDto of createRestaurantDto.reviews) {
-        // Ici, l'utilisation de `this.reviewService.create` suppose que `reviewService`
-        // a une méthode `create` qui prend en compte ces trois arguments.
         await this.reviewService.create(reviewDto, member, savedRestaurant.id);
       }
     }
-
+    delete member.password;
+    delete member.lastname;
+    delete member.firstname;
+    delete member.email;
+    delete member.password;
     return savedRestaurant;
   }
 
   async findAll() {
-    // relations: est ajouter pour recuperer les infos des entité de jointure
     const allRestaurants = await this.restaurantsRepository.find();
 
     // Supprimer les informations sensibles sur l'utilisateur

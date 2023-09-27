@@ -50,8 +50,9 @@ export class ReviewController {
     @Param('id') id: string,
     @Body() updateReviewDto: UpdateReviewDto,
   ) {
-    const memberId = req.user.id;
-    return this.reviewService.update(+id, updateReviewDto, memberId);
+    const member = req.user;
+    console.log('memberId dans le controlleur ' + JSON.stringify(member));
+    return this.reviewService.update(+id, updateReviewDto, member);
   }
 
   @Delete(':id')

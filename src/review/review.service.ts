@@ -133,14 +133,22 @@ export class ReviewService {
   async update(id: number, updateReviewDto: UpdateReviewDto, member: Member) {
     const existingReview = await this.reviewRepository.findOne({
       where: { id: id },
+      relations: ['member'],
     });
-
+    const user = await this.memberRepository.findOne({
+      where: { id: member.id },
+    });
+    console.log('mon menbre dans le serivice ' + member);
     if (!existingReview) {
       throw new NotFoundException(`Review with id ${id} not found`);
     }
 
     // Vérification de l'autorisation
-    if (existingReview.member.id !== member.id) {
+    console.log('existingReview.member.id:', existingReview.member.id);
+    console.log('member.id:', member.id);
+    console.log(existingReview.member.id);
+    console.log('la valeur a probmleme' + JSON.stringify(member.id));
+    if (existingReview.member.id !== user.id) {
       // Ou tout autre champ que tu utilises pour identifier le membre
       throw new ForbiddenException(
         "Vous n'avez pas le droit de modifier cette review",
