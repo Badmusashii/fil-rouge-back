@@ -135,6 +135,8 @@ export class ReviewService {
       where: { id: id },
       relations: ['member'],
     });
+    console.log('existingReview:', existingReview);
+
     const user = await this.memberRepository.findOne({
       where: { id: member.id },
     });
@@ -163,10 +165,7 @@ export class ReviewService {
     delete updatedReview.member.firstname;
     delete updatedReview.member.email;
     delete updatedReview.member.password;
-    delete updatedReview.restaurant.member.firstname;
-    delete updatedReview.restaurant.member.lastname;
-    delete updatedReview.restaurant.member.email;
-    delete updatedReview.restaurant.member.password;
+
     return {
       status: 'success',
       message: `La review avec l'id ${id} a été mise à jour avec succès.`,
