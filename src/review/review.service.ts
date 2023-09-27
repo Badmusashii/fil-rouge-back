@@ -62,6 +62,8 @@ export class ReviewService {
       newReview.restaurant = restaurant;
       newReview.groupe = groupe;
 
+      console.log('Value of newReview.vote: ', newReview.vote);
+
       return await this.reviewRepository.save(newReview);
     }
   }
