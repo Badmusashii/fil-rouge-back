@@ -43,7 +43,7 @@ CREATE TABLE review (
   FOREIGN KEY (idmember) REFERENCES member(id),
   FOREIGN KEY (idrestaurant) REFERENCES restaurant(id),
   FOREIGN KEY (idgroupe) REFERENCES groupe(id),
-  UNIQUE (idmember, idrestaurant, idgroupe, vote)
+  UNIQUE (idmember, idrestaurant, idgroupe)
 );
 
 CREATE TABLE membergroupe (

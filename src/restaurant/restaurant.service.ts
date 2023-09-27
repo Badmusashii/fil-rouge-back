@@ -39,24 +39,48 @@ export class RestaurantService {
     newRestaurant.categorie = createRestaurantDto.categorie;
     newRestaurant.member = member;
 
+    if (createRestaurantDto.reviews) {
+      newRestaurant.reviews = await Promise.all(
+        createRestaurantDto.reviews.map(async (reviewDto) => {
+          const review = new Review();
+          review.review = reviewDto.review;
+          review.member = member;
+
+          const groupe = await this.groupeRepository.findOne({
+            where: { id: reviewDto.idgroupe },
+          });
+
+          if (groupe) {
+            review.groupe = groupe;
+          } else {
+            throw new NotFoundException(
+              `Groupe with id ${reviewDto.idgroupe} not found`,
+            );
+          }
+          return review;
+        }),
+      );
+    }
     // if (createRestaurantDto.reviews) {
-    //   newRestaurant.reviews = createRestaurantDto.reviews.map((reviewDto) => {
-    //     const review = new Review();
-    //     review.review = reviewDto.review;
-    //     review.member = member;
-    //     // review.groupe = reviewDto.idgroupe;
-    //     const groupe = this.groupeRepository.findOne({
-    //       where: { id: reviewDto.idgroupe },
-    //     });
-    //     if (groupe) {
-    //       review.groupe = groupe;
-    //     } else {
-    //       throw new NotFoundException(
-    //         `Groupe with id ${reviewDto.idgroupe} not found`,
-    //       );
-    //     }
-    //     return review;
-    //   });
+    //   newRestaurant.reviews = await createRestaurantDto.reviews.map(
+    //     (reviewDto) => {
+    //       const review = new Review();
+    //       review.review = reviewDto.review;
+    //       review.member = member;
+    //       review.idgroupe = reviewDto.idgroupe;
+    //       const groupe = this.groupeRepository.findOne({
+    //         where: { id: reviewDto.idgroupe },
+    //       });
+    //       if (groupe) {
+    //         review.groupe = groupe;
+    //       } else {
+    //         throw new NotFoundException(
+    //           `Groupe with id ${reviewDto.idgroupe} not found`,
+    //         );
+    //       }
+    //       return review;
+    //     },
+    //   );
     // }
 
     return this.restaurantsRepository.save(newRestaurant);
