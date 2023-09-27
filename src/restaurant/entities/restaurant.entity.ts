@@ -33,6 +33,6 @@ export class Restaurant {
   @JoinColumn({ name: 'idcategorie' })
   categorie: Categorie;
 
-  @OneToMany(() => Review, (review) => review.restaurant, { cascade: true })
+  @OneToMany(() => Review, (review) => review.restaurant, { eager: true, cascade: true })
   reviews: Review[];
 }

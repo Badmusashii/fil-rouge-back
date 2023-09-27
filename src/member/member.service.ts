@@ -71,7 +71,7 @@ export class MemberService implements OnModuleInit {
   }
 
   findOne(member: Member) {
-    delete member.email;
+    // delete member.email;
     delete member.password;
     delete member.id;
     return member;
