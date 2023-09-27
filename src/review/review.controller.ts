@@ -43,6 +43,14 @@ export class ReviewController {
     return this.reviewService.findOne(+id);
   }
 
+  @Get('countVotes/:restaurantId')
+  @UseGuards(AuthGuard('jwt'))
+  async countVotes(
+    @Param('restaurantId') restaurantId: number,
+  ): Promise<{ thumbsUp: number; thumbsDown: number }> {
+    return await this.reviewService.countVotesByRestaurant(restaurantId);
+  }
+
   @Patch(':id')
   @UseGuards(AuthGuard('jwt'))
   update(

@@ -173,6 +173,26 @@ export class ReviewService {
     };
   }
 
+  async countVotesByRestaurant(
+    restaurantId: number,
+  ): Promise<{ thumbsUp: number; thumbsDown: number }> {
+    const thumbsUpCount = await this.reviewRepository.count({
+      where: {
+        restaurant: { id: restaurantId },
+        vote: true,
+      },
+    });
+
+    const thumbsDownCount = await this.reviewRepository.count({
+      where: {
+        restaurant: { id: restaurantId },
+        vote: false,
+      },
+    });
+
+    return { thumbsUp: thumbsUpCount, thumbsDown: thumbsDownCount };
+  }
+
   async remove(id: number) {
     const result = await this.reviewRepository.delete(id);
     if (result.affected === 0) {
