@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { Categorie } from 'src/categorie/entities/categorie.entity';
 import { Member } from 'src/member/entities/member.entity';
 import { Review } from 'src/review/entities/review.entity';
+import { Groupe } from 'src/groupe/entities/groupe.entity';
 
 @Injectable()
 export class RestaurantService {
@@ -16,6 +17,7 @@ export class RestaurantService {
     @InjectRepository(Categorie)
     private categorieRepository: Repository<Categorie>,
     @InjectRepository(Member) private memberRepository: Repository<Member>,
+    @InjectRepository(Groupe) private groupeRepository: Repository<Groupe>,
   ) {}
   // async create(createRestaurantDto: CreateRestaurantDto, member: Member) {
   //   const newRestaurant = this.restaurantsRepository.create({
@@ -37,16 +39,25 @@ export class RestaurantService {
     newRestaurant.categorie = createRestaurantDto.categorie;
     newRestaurant.member = member;
 
-    // Ajoute l'id du membre à chaque review dans le DTO
-    if (createRestaurantDto.reviews) {
-      newRestaurant.reviews = createRestaurantDto.reviews.map((reviewDto) => {
-        const review = new Review();
-        review.review = reviewDto.review;
-        review.member = member;
-        review.groupes = reviewDto.groupes;
-        return review;
-      });
-    }
+    // if (createRestaurantDto.reviews) {
+    //   newRestaurant.reviews = createRestaurantDto.reviews.map((reviewDto) => {
+    //     const review = new Review();
+    //     review.review = reviewDto.review;
+    //     review.member = member;
+    //     // review.groupe = reviewDto.idgroupe;
+    //     const groupe = this.groupeRepository.findOne({
+    //       where: { id: reviewDto.idgroupe },
+    //     });
+    //     if (groupe) {
+    //       review.groupe = groupe;
+    //     } else {
+    //       throw new NotFoundException(
+    //         `Groupe with id ${reviewDto.idgroupe} not found`,
+    //       );
+    //     }
+    //     return review;
+    //   });
+    // }
 
     return this.restaurantsRepository.save(newRestaurant);
   }

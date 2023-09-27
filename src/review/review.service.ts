@@ -18,44 +18,52 @@ export class ReviewService {
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,
     @InjectRepository(Restaurant)
-    private readonly restaurantRespository: Repository<Restaurant>,
+    private restaurantRespository: Repository<Restaurant>,
+    @InjectRepository(Groupe) private groupeRepository: Repository<Groupe>,
+    @InjectRepository(Member) private memberRepository: Repository<Member>,
   ) {}
 
   async create(
     createReviewDto: CreateReviewDto,
-    member: Member,
+    member: any,
     idRestaurant: number,
-  ) {
-    console.log(member);
+  ): Promise<Review> {
+    // Récupération des autres entités par ID
     const restaurant = await this.restaurantRespository.findOne({
       where: { id: idRestaurant },
     });
-    if (!restaurant) {
-      return {
-        status: 'fail',
-        message: `Le restaurant avec l'id ${idRestaurant} n'a pas été trouvé.`,
-        data: null,
-      };
-    }
-    const newReview = await this.reviewRepository.save({
-      ...createReviewDto,
-      member,
-      restaurant,
+    const groupe = await this.groupeRepository.findOne({
+      where: { id: createReviewDto.idgroupe },
     });
 
-    // Effacement des données de notre utilisateur
-    delete member.email;
-    delete member.firstname;
-    delete member.lastname;
-    delete member.password;
-    delete restaurant.member;
-    // ____________________________________
+    if (!restaurant || !groupe) {
+      throw new NotFoundException(
+        "Une des entités associées n'a pas été trouvée",
+      );
+    }
 
-    return {
-      status: 'success',
-      message: `La review pour le restaurant ${restaurant.name} a bien été creer pas ${member.username}.`,
-      data: newReview,
-    };
+    const existingReview = await this.reviewRepository.findOne({
+      where: {
+        member: { id: member.id },
+        restaurant: { id: idRestaurant },
+        groupe: { id: createReviewDto.idgroupe },
+      },
+    });
+
+    if (existingReview) {
+      existingReview.review = createReviewDto.review;
+      existingReview.vote = createReviewDto.vote;
+      return await this.reviewRepository.save(existingReview);
+    } else {
+      const newReview = new Review();
+      newReview.review = createReviewDto.review;
+      newReview.vote = createReviewDto.vote;
+      newReview.member = member.id;
+      newReview.restaurant = restaurant;
+      newReview.groupe = groupe;
+
+      return await this.reviewRepository.save(newReview);
+    }
   }
 
   async findAllByRestaurantId(id: number) {
@@ -82,7 +90,6 @@ export class ReviewService {
         delete review.restaurant;
       }
     }
-    // -------------------------------------------------------
 
     return {
       status: 'success',

@@ -4,16 +4,16 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
-  OneToMany,
   ManyToMany,
   JoinTable,
+  Unique,
 } from 'typeorm';
 import { Member } from 'src/member/entities/member.entity';
 import { Restaurant } from 'src/restaurant/entities/restaurant.entity';
 import { Groupe } from 'src/groupe/entities/groupe.entity';
-import { ReviewVote } from 'src/review_votes/entities/review_vote.entity';
 
 @Entity()
+@Unique(['member', 'restaurant', 'groupe'])
 export class Review {
   @PrimaryGeneratedColumn()
   id: number;
@@ -21,31 +21,20 @@ export class Review {
   @Column({ type: 'text' })
   review: string;
 
-  // @Column({ type: 'boolean' })
-  // vote: boolean;
+  @Column({ type: 'boolean' })
+  vote: boolean;
 
-  @ManyToOne(() => Member, (m) => m.reviews, { eager: false })
+  @ManyToOne(() => Member, (member) => member.reviews, { eager: true })
   @JoinColumn({ name: 'idmember' })
   member: Member;
 
-  @ManyToOne(() => Restaurant)
+  @ManyToOne(() => Restaurant, (restaurant) => restaurant.reviews, {
+    eager: false,
+  })
   @JoinColumn({ name: 'idrestaurant' })
   restaurant: Restaurant;
 
-  @ManyToMany(() => Groupe, (groupe) => groupe.reviews, { cascade: true })
-  @JoinTable({
-    name: 'review_groupe',
-    joinColumn: {
-      name: 'idreview',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'idgroupe',
-      referencedColumnName: 'id',
-    },
-  })
-  groupes: Groupe[];
-
-  @OneToMany(() => ReviewVote, (reviewVote) => reviewVote.review)
-  reviewVotes: ReviewVote[];
+  @ManyToOne(() => Groupe, (groupe) => groupe.reviews, { eager: true })
+  @JoinColumn({ name: 'idgroupe' })
+  groupe: Groupe;
 }

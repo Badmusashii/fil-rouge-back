@@ -28,7 +28,7 @@ export class ReviewController {
     const member = req.user;
     console.log(member);
     console.log('le creatDto ' + JSON.stringify(createReviewDto));
-    return this.reviewService.create(createReviewDto, member, idRestaurant);
+    return this.reviewService.create(createReviewDto, member, +idRestaurant);
   }
 
   @Get('restaurant/:id')

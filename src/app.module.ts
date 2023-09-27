@@ -14,8 +14,6 @@ import { Restaurant } from './restaurant/entities/restaurant.entity';
 import { Review } from './review/entities/review.entity';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
-import { ReviewVotesModule } from './review_votes/review_votes.module';
-import { ReviewVote } from './review_votes/entities/review_vote.entity';
 
 @Module({
   imports: [
@@ -29,7 +27,7 @@ import { ReviewVote } from './review_votes/entities/review_vote.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Categorie, Groupe, Member, Restaurant, Review, ReviewVote],
+      entities: [Categorie, Groupe, Member, Restaurant, Review],
       // Endroit ou il faut mettre toutes les entités pour que typeOrm les prennent
       // en compte.
       synchronize: false,
@@ -49,7 +47,6 @@ import { ReviewVote } from './review_votes/entities/review_vote.entity';
     ReviewModule,
     GroupeModule,
     AuthModule,
-    ReviewVotesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
