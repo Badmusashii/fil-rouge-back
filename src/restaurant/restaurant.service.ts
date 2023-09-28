@@ -7,15 +7,20 @@ import { Repository } from 'typeorm';
 import { Categorie } from 'src/categorie/entities/categorie.entity';
 import { Member } from 'src/member/entities/member.entity';
 import { Review } from 'src/review/entities/review.entity';
+import { Groupe } from 'src/groupe/entities/groupe.entity';
+import { ReviewService } from 'src/review/review.service';
 
 @Injectable()
 export class RestaurantService {
   constructor(
+    private reviewService: ReviewService,
     @InjectRepository(Restaurant)
     private restaurantsRepository: Repository<Restaurant>,
     @InjectRepository(Categorie)
     private categorieRepository: Repository<Categorie>,
     @InjectRepository(Member) private memberRepository: Repository<Member>,
+    @InjectRepository(Groupe) private groupeRepository: Repository<Groupe>,
+    @InjectRepository(Review) private reviewRepository: Repository<Review>,
   ) {}
   // async create(createRestaurantDto: CreateRestaurantDto, member: Member) {
   //   const newRestaurant = this.restaurantsRepository.create({
@@ -26,33 +31,94 @@ export class RestaurantService {
   //   return await this.restaurantsRepository.save(newRestaurant);
   // }
 
+  // async create(
+  //   createRestaurantDto: CreateRestaurantDto,
+  //   member: Member,
+  // ): Promise<Restaurant> {
+  //   const newRestaurant = new Restaurant();
+  //   newRestaurant.name = createRestaurantDto.name;
+  //   newRestaurant.adresse = createRestaurantDto.adresse;
+  //   newRestaurant.price = createRestaurantDto.price;
+  //   newRestaurant.categorie = createRestaurantDto.categorie;
+  //   newRestaurant.member = member;
+
+  //   if (createRestaurantDto.reviews) {
+  //     newRestaurant.reviews = await Promise.all(
+  //       createRestaurantDto.reviews.map(async (reviewDto) => {
+  //         const review = new Review();
+  //         review.review = reviewDto.review;
+  //         review.member = member;
+
+  //         const groupe = await this.groupeRepository.findOne({
+  //           where: { id: reviewDto.idgroupe },
+  //         });
+
+  //         if (groupe) {
+  //           review.groupe = groupe;
+  //         } else {
+  //           throw new NotFoundException(
+  //             `Groupe with id ${reviewDto.idgroupe} not found`,
+  //           );
+  //         }
+  //         return review;
+  //       }),
+  //     );
+  //   }
+  //   // if (createRestaurantDto.reviews) {
+  //   //   newRestaurant.reviews = await createRestaurantDto.reviews.map(
+  //   //     (reviewDto) => {
+  //   //       const review = new Review();
+  //   //       review.review = reviewDto.review;
+  //   //       review.member = member;
+  //   //       review.idgroupe = reviewDto.idgroupe;
+  //   //       const groupe = this.groupeRepository.findOne({
+  //   //         where: { id: reviewDto.idgroupe },
+  //   //       });
+  //   //       if (groupe) {
+  //   //         review.groupe = groupe;
+  //   //       } else {
+  //   //         throw new NotFoundException(
+  //   //           `Groupe with id ${reviewDto.idgroupe} not found`,
+  //   //         );
+  //   //       }
+  //   //       return review;
+  //   //     },
+  //   //   );
+  //   // }
+
+  //   return this.restaurantsRepository.save(newRestaurant);
+  // }
+
   async create(
     createRestaurantDto: CreateRestaurantDto,
     member: Member,
   ): Promise<Restaurant> {
     const newRestaurant = new Restaurant();
+
     newRestaurant.name = createRestaurantDto.name;
     newRestaurant.adresse = createRestaurantDto.adresse;
     newRestaurant.price = createRestaurantDto.price;
     newRestaurant.categorie = createRestaurantDto.categorie;
     newRestaurant.member = member;
 
-    // Ajoute l'id du membre à chaque review dans le DTO
-    if (createRestaurantDto.reviews) {
-      newRestaurant.reviews = createRestaurantDto.reviews.map((reviewDto) => {
-        const review = new Review();
-        review.review = reviewDto.review;
-        review.member = member;
-        review.groupes = reviewDto.groupes;
-        return review;
-      });
-    }
+    const savedRestaurant = await this.restaurantsRepository.save(
+      newRestaurant,
+    );
 
-    return this.restaurantsRepository.save(newRestaurant);
+    if (createRestaurantDto.reviews && createRestaurantDto.reviews.length > 0) {
+      for (const reviewDto of createRestaurantDto.reviews) {
+        await this.reviewService.create(reviewDto, member, savedRestaurant.id);
+      }
+    }
+    delete member.password;
+    delete member.lastname;
+    delete member.firstname;
+    delete member.email;
+    delete member.password;
+    return savedRestaurant;
   }
 
   async findAll() {
-    // relations: est ajouter pour recuperer les infos des entité de jointure
     const allRestaurants = await this.restaurantsRepository.find();
 
     // Supprimer les informations sensibles sur l'utilisateur

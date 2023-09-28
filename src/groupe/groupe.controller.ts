@@ -60,6 +60,22 @@ export class GroupeController {
     return this.groupeService.putAnUserInGroupeWithToken(token, groupeId);
   }
 
+  @Put(':id/update-name')
+  @UseGuards(AuthGuard('jwt'))
+  async updateGroupName(
+    @Request() req,
+    @Param('id') groupeId: number,
+    @Body('newName') newName: string,
+  ) {
+    try {
+      console.log('newname ' + newName);
+      // Vous pouvez également ajouter une logique pour vérifier si l'utilisateur actuel a le droit de changer le nom du groupe
+      return await this.groupeService.updateGroupName(groupeId, newName);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   @Delete(':id')
   @UseGuards(AuthGuard('jwt'))
   removeAnUserInGroupe(@Request() req, @Param('id') id: string) {
