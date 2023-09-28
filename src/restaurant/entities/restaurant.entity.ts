@@ -25,7 +25,7 @@ export class Restaurant {
   @Column({ type: 'enum', enum: Price })
   price: Price;
 
-  @ManyToOne(() => Member, { eager: true })
+  @ManyToOne(() => Member, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'idmember' })
   member: Member;
 

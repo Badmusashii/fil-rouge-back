@@ -32,7 +32,7 @@ export class Member {
   @OneToMany(() => Review, (review) => review.member)
   reviews: Review[];
 
-  @ManyToMany(() => Groupe, (groupe) => groupe.members)
+  @ManyToMany(() => Groupe, (groupe) => groupe.members, { onDelete: 'CASCADE' })
   @JoinTable({
     name: 'membergroupe',
     joinColumn: {

@@ -23,7 +23,7 @@ CREATE TABLE restaurant (
   price price NOT NULL,
   idmember INTEGER NOT NULL,
   idcategorie INTEGER NOT NULL,
-  CONSTRAINT fk_member FOREIGN KEY (idmember) REFERENCES member(id),
+  CONSTRAINT fk_member FOREIGN KEY (idmember) REFERENCES member(id) ON DELETE CASCADE,
   CONSTRAINT fk_categorie FOREIGN KEY (idcategorie) REFERENCES categorie(id)
 );
 
@@ -40,7 +40,7 @@ CREATE TABLE review (
   idmember INTEGER,
   idrestaurant INTEGER,
   idgroupe INTEGER,
-  FOREIGN KEY (idmember) REFERENCES member(id),
+  FOREIGN KEY (idmember) REFERENCES member(id) ON DELETE CASCADE,
   FOREIGN KEY (idrestaurant) REFERENCES restaurant(id),
   FOREIGN KEY (idgroupe) REFERENCES groupe(id),
   UNIQUE (idmember, idrestaurant, idgroupe)
@@ -50,7 +50,7 @@ CREATE TABLE membergroupe (
   id SERIAL PRIMARY KEY,
   idMember INTEGER,
   idGroupe INTEGER,
-  FOREIGN KEY (idMember) REFERENCES member(id),
+  FOREIGN KEY (idMember) REFERENCES member(id) ON DELETE CASCADE,
   FOREIGN KEY (idGroupe) REFERENCES groupe(id)
 );
 

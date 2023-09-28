@@ -24,7 +24,10 @@ export class Review {
   @Column({ type: 'boolean' })
   vote: boolean;
 
-  @ManyToOne(() => Member, (member) => member.reviews, { eager: true })
+  @ManyToOne(() => Member, (member) => member.reviews, {
+    eager: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'idmember' })
   member: Member;
 
