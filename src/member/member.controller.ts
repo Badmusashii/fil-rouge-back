@@ -34,13 +34,7 @@ export class MemberController {
   update(@Request() req, @Body() updateMemberDto: UpdateMemberDto) {
     const memberId = req.user.id;
     console.log('req.user: ', memberId);
-    // La const memberId sert à recuperer l'id utilisateur
-    // qui se trouve dans le Token
-    return this.memberService.update(
-      memberId,
-      updateMemberDto.currentPassword,
-      updateMemberDto,
-    );
+    return this.memberService.update(memberId, updateMemberDto);
   }
 
   @Get('user')

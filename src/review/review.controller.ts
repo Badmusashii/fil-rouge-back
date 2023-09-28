@@ -8,11 +8,14 @@ import {
   Delete,
   UseGuards,
   Request,
+  NotFoundException,
+  ConflictException,
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { AddVoteDto } from './dto/AddVote.dto';
 
 @Controller('review')
 export class ReviewController {
@@ -27,10 +30,9 @@ export class ReviewController {
   ) {
     const member = req.user;
     console.log(member);
-    return this.reviewService.create(createReviewDto, member, idRestaurant);
+    console.log('le creatDto ' + JSON.stringify(createReviewDto));
+    return this.reviewService.create(createReviewDto, member, +idRestaurant);
   }
-
-  
 
   @Get('restaurant/:id')
   @UseGuards(AuthGuard('jwt'))
@@ -38,10 +40,26 @@ export class ReviewController {
     return await this.reviewService.findAllByRestaurantId(+id);
   }
 
-  @Get(':id')
+  @Get('review/:id')
   @UseGuards(AuthGuard('jwt'))
   findOne(@Param('id') id: string) {
     return this.reviewService.findOne(+id);
+  }
+
+  @Get('byMemberGroups')
+  @UseGuards(AuthGuard('jwt'))
+  async findRestaurantsByMemberGroups(@Request() req) {
+    const memberId = req.user.id;
+    console.log('memberId coté controllezur ' + memberId);
+    return await this.reviewService.findRestaurantsByMemberGroups(memberId);
+  }
+
+  @Get('countVotes/:restaurantId')
+  @UseGuards(AuthGuard('jwt'))
+  async countVotes(
+    @Param('restaurantId') restaurantId: number,
+  ): Promise<{ thumbsUp: number; thumbsDown: number }> {
+    return await this.reviewService.countVotesByRestaurant(restaurantId);
   }
 
   @Patch(':id')
@@ -51,8 +69,33 @@ export class ReviewController {
     @Param('id') id: string,
     @Body() updateReviewDto: UpdateReviewDto,
   ) {
+    const member = req.user;
+    console.log('memberId dans le controlleur ' + JSON.stringify(member));
+    return this.reviewService.update(+id, updateReviewDto, member);
+  }
+
+  @Post('vote/addVote')
+  @UseGuards(AuthGuard('jwt'))
+  async addVote(@Request() req, @Body() addVoteDto: AddVoteDto) {
     const memberId = req.user.id;
-    return this.reviewService.update(+id, updateReviewDto, memberId);
+    console.log('id user in contr' + memberId);
+    try {
+      return await this.reviewService.addVote(
+        memberId,
+        addVoteDto.restaurantId,
+        addVoteDto.groupeId,
+        addVoteDto.vote,
+      );
+    } catch (err) {
+      if (err instanceof NotFoundException) {
+        return { message: 'Not Found' };
+      }
+      if (err instanceof ConflictException) {
+        return { message: 'Vote déjà enregistré' };
+      }
+      console.log(err);
+      return { message: 'Erreur inattendue' };
+    }
   }
 
   @Delete(':id')

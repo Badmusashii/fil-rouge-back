@@ -9,5 +9,5 @@ export class UpdateMemberDto {
   firstname?: string;
   email?: string;
   currentPassword?: string;
-  password?: string;
+  newPassword?: string;
 }
