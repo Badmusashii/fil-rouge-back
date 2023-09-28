@@ -14,7 +14,6 @@ import { Groupe } from 'src/groupe/entities/groupe.entity';
 
 @Injectable()
 export class ReviewService {
-  
   constructor(
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,
@@ -63,6 +62,7 @@ export class ReviewService {
     const reviews = await this.reviewRepository.find({
       where: { restaurant: { id: id } },
     });
+    console.log(reviews);
     if (reviews.length === 0) {
       return {
         status: 'success',
@@ -72,11 +72,15 @@ export class ReviewService {
     }
     // Boucle for pour effacer les données de nos utilisateurs
     for (const review of reviews) {
-      delete review.member.email;
-      delete review.member.firstname;
-      delete review.member.lastname;
-      delete review.member.password;
-      delete review.restaurant;
+      if (review.member) {
+        delete review.member.email;
+        delete review.member.firstname;
+        delete review.member.lastname;
+        delete review.member.password;
+      }
+      if (review.restaurant) {
+        delete review.restaurant;
+      }
     }
     // -------------------------------------------------------
 
@@ -87,7 +91,7 @@ export class ReviewService {
     };
   }
 
-  async findAll(){
+  async findAll() {
     return await this.reviewRepository.find();
   }
 
