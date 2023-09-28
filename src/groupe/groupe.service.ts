@@ -176,4 +176,28 @@ export class GroupeService {
       throw new UnauthorizedException('Token invalide');
     }
   }
+
+  async updateGroupName(groupeId: number, newName: string) {
+    // Recherche du groupe par son ID
+    const existingGroupe = await this.groupeRepository.findOne({
+      where: { id: groupeId },
+    });
+
+    if (!existingGroupe) {
+      throw new NotFoundException(`Groupe avec l'ID ${groupeId} introuvable.`);
+    }
+
+    const groupeWithSameName = await this.groupeRepository.findOne({
+      where: { name: newName },
+    });
+
+    if (groupeWithSameName) {
+      throw new BadRequestException('Un groupe avec ce nom existe déjà.');
+    }
+
+    existingGroupe.name = newName;
+    await this.groupeRepository.save(existingGroupe);
+
+    return { message: 'Nom du groupe mis à jour avec succès' };
+  }
 }
