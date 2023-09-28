@@ -27,10 +27,9 @@ export class ReviewController {
   ) {
     const member = req.user;
     console.log(member);
-    return this.reviewService.create(createReviewDto, member, idRestaurant);
+    console.log('le creatDto ' + JSON.stringify(createReviewDto));
+    return this.reviewService.create(createReviewDto, member, +idRestaurant);
   }
-
-  
 
   @Get('restaurant/:id')
   @UseGuards(AuthGuard('jwt'))
@@ -38,10 +37,26 @@ export class ReviewController {
     return await this.reviewService.findAllByRestaurantId(+id);
   }
 
-  @Get(':id')
+  @Get('review/:id')
   @UseGuards(AuthGuard('jwt'))
   findOne(@Param('id') id: string) {
     return this.reviewService.findOne(+id);
+  }
+
+  @Get('byMemberGroups')
+  @UseGuards(AuthGuard('jwt'))
+  async findRestaurantsByMemberGroups(@Request() req) {
+    const memberId = req.user.id;
+    console.log('memberId coté controllezur ' + memberId);
+    return await this.reviewService.findRestaurantsByMemberGroups(memberId);
+  }
+
+  @Get('countVotes/:restaurantId')
+  @UseGuards(AuthGuard('jwt'))
+  async countVotes(
+    @Param('restaurantId') restaurantId: number,
+  ): Promise<{ thumbsUp: number; thumbsDown: number }> {
+    return await this.reviewService.countVotesByRestaurant(restaurantId);
   }
 
   @Patch(':id')
@@ -51,8 +66,9 @@ export class ReviewController {
     @Param('id') id: string,
     @Body() updateReviewDto: UpdateReviewDto,
   ) {
-    const memberId = req.user.id;
-    return this.reviewService.update(+id, updateReviewDto, memberId);
+    const member = req.user;
+    console.log('memberId dans le controlleur ' + JSON.stringify(member));
+    return this.reviewService.update(+id, updateReviewDto, member);
   }
 
   @Delete(':id')

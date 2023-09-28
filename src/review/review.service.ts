@@ -11,51 +11,63 @@ import { Repository } from 'typeorm';
 import { Member } from 'src/member/entities/member.entity';
 import { Restaurant } from 'src/restaurant/entities/restaurant.entity';
 import { Groupe } from 'src/groupe/entities/groupe.entity';
+import { GroupeService } from 'src/groupe/groupe.service';
 
 @Injectable()
 export class ReviewService {
   constructor(
+    private groupeService: GroupeService,
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,
     @InjectRepository(Restaurant)
-    private readonly restaurantRespository: Repository<Restaurant>,
+    private restaurantRespository: Repository<Restaurant>,
+    @InjectRepository(Groupe) private groupeRepository: Repository<Groupe>,
+    @InjectRepository(Member) private memberRepository: Repository<Member>,
   ) {}
 
   async create(
     createReviewDto: CreateReviewDto,
-    member: Member,
+    member: any,
     idRestaurant: number,
-  ) {
-    console.log(member);
+  ): Promise<Review> {
+    // Récupération des autres entités par ID
     const restaurant = await this.restaurantRespository.findOne({
       where: { id: idRestaurant },
     });
-    if (!restaurant) {
-      return {
-        status: 'fail',
-        message: `Le restaurant avec l'id ${idRestaurant} n'a pas été trouvé.`,
-        data: null,
-      };
-    }
-    const newReview = await this.reviewRepository.save({
-      ...createReviewDto,
-      member,
-      restaurant,
+    const groupe = await this.groupeRepository.findOne({
+      where: { id: createReviewDto.idgroupe },
     });
 
-    // Effacement des données de notre utilisateur
-    delete member.email;
-    delete member.firstname;
-    delete member.lastname;
-    delete member.password;
-    delete restaurant.member;
-    // ____________________________________
+    if (!restaurant || !groupe) {
+      throw new NotFoundException(
+        "Une des entités associées n'a pas été trouvée",
+      );
+    }
 
-    return {
-      status: 'success',
-      message: `La review pour le restaurant ${restaurant.name} a bien été creer pas ${member.username}.`,
-      data: newReview,
-    };
+    const existingReview = await this.reviewRepository.findOne({
+      where: {
+        member: { id: member.id },
+        restaurant: { id: idRestaurant },
+        groupe: { id: createReviewDto.idgroupe },
+      },
+    });
+
+    if (existingReview) {
+      existingReview.review = createReviewDto.review;
+      existingReview.vote = createReviewDto.vote;
+      return await this.reviewRepository.save(existingReview);
+    } else {
+      const newReview = new Review();
+      newReview.review = createReviewDto.review;
+      newReview.vote = createReviewDto.vote;
+      newReview.member = member.id;
+      newReview.restaurant = restaurant;
+      newReview.groupe = groupe;
+
+      console.log('Value of newReview.vote: ', newReview.vote);
+
+      return await this.reviewRepository.save(newReview);
+    }
   }
 
   async findAllByRestaurantId(id: number) {
@@ -82,7 +94,6 @@ export class ReviewService {
         delete review.restaurant;
       }
     }
-    // -------------------------------------------------------
 
     return {
       status: 'success',
@@ -124,14 +135,24 @@ export class ReviewService {
   async update(id: number, updateReviewDto: UpdateReviewDto, member: Member) {
     const existingReview = await this.reviewRepository.findOne({
       where: { id: id },
+      relations: ['member'],
     });
+    console.log('existingReview:', existingReview);
 
+    const user = await this.memberRepository.findOne({
+      where: { id: member.id },
+    });
+    console.log('mon menbre dans le serivice ' + member);
     if (!existingReview) {
       throw new NotFoundException(`Review with id ${id} not found`);
     }
 
     // Vérification de l'autorisation
-    if (existingReview.member.id !== member.id) {
+    console.log('existingReview.member.id:', existingReview.member.id);
+    console.log('member.id:', member.id);
+    console.log(existingReview.member.id);
+    console.log('la valeur a probmleme' + JSON.stringify(member.id));
+    if (existingReview.member.id !== user.id) {
       // Ou tout autre champ que tu utilises pour identifier le membre
       throw new ForbiddenException(
         "Vous n'avez pas le droit de modifier cette review",
@@ -146,15 +167,59 @@ export class ReviewService {
     delete updatedReview.member.firstname;
     delete updatedReview.member.email;
     delete updatedReview.member.password;
-    delete updatedReview.restaurant.member.firstname;
-    delete updatedReview.restaurant.member.lastname;
-    delete updatedReview.restaurant.member.email;
-    delete updatedReview.restaurant.member.password;
+
     return {
       status: 'success',
       message: `La review avec l'id ${id} a été mise à jour avec succès.`,
       data: updatedReview,
     };
+  }
+
+  async countVotesByRestaurant(
+    restaurantId: number,
+  ): Promise<{ thumbsUp: number; thumbsDown: number }> {
+    const thumbsUpCount = await this.reviewRepository.count({
+      where: {
+        restaurant: { id: restaurantId },
+        vote: true,
+      },
+    });
+
+    const thumbsDownCount = await this.reviewRepository.count({
+      where: {
+        restaurant: { id: restaurantId },
+        vote: false,
+      },
+    });
+
+    return { thumbsUp: thumbsUpCount, thumbsDown: thumbsDownCount };
+  }
+
+  async findRestaurantsByMemberGroups(memberId: number) {
+    console.log('coté service ' + memberId);
+    if (isNaN(memberId)) {
+      throw new Error('MemberId est invalide');
+    }
+    // Obtenir tous les groupes pour ce membre
+    const groups = await this.groupeService.findAllGroupeForUser(memberId);
+    const restaurantsByGroup = {};
+
+    // Parcourir chaque groupe pour trouver les restaurants associés
+    for (const group of groups) {
+      const reviews = await this.reviewRepository.find({
+        where: { groupe: { id: group.id } }, // Trouver les reviews par le groupe
+        relations: ['restaurant'], // Charger les relations avec les restaurants
+      });
+
+      // Extraire les restaurants uniques de ces reviews
+      const uniqueRestaurants = Array.from(
+        new Set(reviews.map((r) => r.restaurant.id)),
+      ).map((id) => reviews.find((r) => r.restaurant.id === id).restaurant);
+
+      restaurantsByGroup[group.id] = uniqueRestaurants;
+    }
+
+    return restaurantsByGroup;
   }
 
   async remove(id: number) {

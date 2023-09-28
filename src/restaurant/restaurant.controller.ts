@@ -24,6 +24,7 @@ export class RestaurantController {
     // const memberId = req.user.id;
     console.log(createRestaurantDto);
     const member = req.user;
+    console.log(member);
     return this.restaurantService.create(createRestaurantDto, member);
   }
 

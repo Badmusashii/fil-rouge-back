@@ -3,8 +3,6 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToMany,
-  ManyToOne,
-  JoinColumn,
   JoinTable,
   OneToMany,
 } from 'typeorm';
@@ -33,17 +31,6 @@ export class Groupe {
   })
   members: Member[];
 
-  @ManyToMany(() => Review, (review) => review.groupes)
-  // @JoinTable({
-  //   name: 'review_groupe',
-  //   joinColumn: {
-  //     name: 'idgroupe',
-  //     referencedColumnName: 'id',
-  //   },
-  //   inverseJoinColumn: {
-  //     name: 'idreview',
-  //     referencedColumnName: 'id',
-  //   },
-  // })
+  @OneToMany(() => Review, (review) => review.groupe)
   reviews: Review[];
 }

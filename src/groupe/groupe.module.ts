@@ -21,6 +21,6 @@ import { MemberModule } from 'src/member/member.module';
   ],
   controllers: [GroupeController],
   providers: [GroupeService],
-  exports: [GroupeService],
+  exports: [GroupeService, TypeOrmModule.forFeature([Groupe])],
 })
 export class GroupeModule {}
