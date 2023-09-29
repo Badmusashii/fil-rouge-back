@@ -8,11 +8,14 @@ import {
   Delete,
   UseGuards,
   Request,
+  NotFoundException,
+  ConflictException,
 } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { AddVoteDto } from './dto/AddVote.dto';
 
 @Controller('review')
 export class ReviewController {
@@ -69,6 +72,30 @@ export class ReviewController {
     const member = req.user;
     console.log('memberId dans le controlleur ' + JSON.stringify(member));
     return this.reviewService.update(+id, updateReviewDto, member);
+  }
+
+  @Post('vote/addVote')
+  @UseGuards(AuthGuard('jwt'))
+  async addVote(@Request() req, @Body() addVoteDto: AddVoteDto) {
+    const memberId = req.user.id;
+    console.log('id user in contr' + memberId);
+    try {
+      return await this.reviewService.addVote(
+        memberId,
+        addVoteDto.restaurantId,
+        addVoteDto.groupeId,
+        addVoteDto.vote,
+      );
+    } catch (err) {
+      if (err instanceof NotFoundException) {
+        return { message: 'Not Found' };
+      }
+      if (err instanceof ConflictException) {
+        return { message: 'Vote déjà enregistré' };
+      }
+      console.log(err);
+      return { message: 'Erreur inattendue' };
+    }
   }
 
   @Delete(':id')

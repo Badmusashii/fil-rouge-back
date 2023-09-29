@@ -18,7 +18,7 @@ export class Review {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'text', nullable: true })
   review: string;
 
   @Column({ type: 'boolean' })

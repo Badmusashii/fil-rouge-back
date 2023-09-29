@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -25,12 +26,56 @@ export class ReviewService {
     @InjectRepository(Member) private memberRepository: Repository<Member>,
   ) {}
 
+  // async create(
+  //   createReviewDto: CreateReviewDto,
+  //   member: any,
+  //   idRestaurant: number,
+  // ): Promise<Review> {
+  //   // Récupération des autres entités par ID
+  //   const restaurant = await this.restaurantRespository.findOne({
+  //     where: { id: idRestaurant },
+  //   });
+  //   const groupe = await this.groupeRepository.findOne({
+  //     where: { id: createReviewDto.idgroupe },
+  //   });
+
+  //   if (!restaurant || !groupe) {
+  //     throw new NotFoundException(
+  //       "Une des entités associées n'a pas été trouvée",
+  //     );
+  //   }
+
+  //   const existingReview = await this.reviewRepository.findOne({
+  //     where: {
+  //       member: { id: member.id },
+  //       restaurant: { id: idRestaurant },
+  //       groupe: { id: createReviewDto.idgroupe },
+  //     },
+  //   });
+
+  //   if (existingReview) {
+  //     existingReview.review = createReviewDto.review;
+  //     existingReview.vote = createReviewDto.vote;
+  //     return await this.reviewRepository.save(existingReview);
+  //   } else {
+  //     const newReview = new Review();
+  //     newReview.review = createReviewDto.review;
+  //     newReview.vote = createReviewDto.vote;
+  //     newReview.member = member.id;
+  //     newReview.restaurant = restaurant;
+  //     newReview.groupe = groupe;
+
+  //     console.log('Value of newReview.vote: ', newReview.vote);
+
+  //     return await this.reviewRepository.save(newReview);
+  //   }
+  // }
+
   async create(
     createReviewDto: CreateReviewDto,
     member: any,
     idRestaurant: number,
-  ): Promise<Review> {
-    // Récupération des autres entités par ID
+  ): Promise<any> {
     const restaurant = await this.restaurantRespository.findOne({
       where: { id: idRestaurant },
     });
@@ -53,9 +98,23 @@ export class ReviewService {
     });
 
     if (existingReview) {
+      if (existingReview.vote === createReviewDto.vote) {
+        return {
+          status: 'error',
+          message:
+            'Vote déjà enregistré, impossible de voter deux fois de la même manière.',
+        };
+      }
+
       existingReview.review = createReviewDto.review;
       existingReview.vote = createReviewDto.vote;
-      return await this.reviewRepository.save(existingReview);
+      const updatedReview = await this.reviewRepository.save(existingReview);
+
+      return {
+        status: 'success',
+        message: 'Votre review a été mise à jour avec succès.',
+        data: updatedReview,
+      };
     } else {
       const newReview = new Review();
       newReview.review = createReviewDto.review;
@@ -64,9 +123,13 @@ export class ReviewService {
       newReview.restaurant = restaurant;
       newReview.groupe = groupe;
 
-      console.log('Value of newReview.vote: ', newReview.vote);
+      const createdReview = await this.reviewRepository.save(newReview);
 
-      return await this.reviewRepository.save(newReview);
+      return {
+        status: 'success',
+        message: 'Votre nouvelle review a été créée avec succès.',
+        data: createdReview,
+      };
     }
   }
 
@@ -193,6 +256,59 @@ export class ReviewService {
     });
 
     return { thumbsUp: thumbsUpCount, thumbsDown: thumbsDownCount };
+  }
+
+  async addVote(
+    memberId: number,
+    restaurantId: number,
+    groupeId: number,
+    vote: boolean,
+  ): Promise<Review> {
+    const member = await this.memberRepository.findOne({
+      where: { id: memberId },
+    });
+    const restaurant = await this.restaurantRespository.findOne({
+      where: { id: restaurantId },
+    });
+    const groupe = await this.groupeRepository.findOne({
+      where: { id: groupeId },
+    });
+
+    if (!member || !restaurant || !groupe) {
+      throw new NotFoundException('Membre, Restaurant ou Groupe non trouvé.');
+    }
+
+    const existingReview = await this.reviewRepository.findOne({
+      where: {
+        member: { id: memberId },
+        restaurant: { id: restaurantId },
+        groupe: { id: groupeId },
+      },
+    });
+
+    if (existingReview) {
+      if (existingReview.vote === vote) {
+        throw new ConflictException(
+          'Vote déjà enregistré, impossible de voter deux fois de la même manière.',
+        );
+      }
+      existingReview.vote = vote;
+      return await this.reviewRepository.save(existingReview);
+    } else {
+      const newReview = new Review();
+      newReview.member = member;
+      newReview.restaurant = restaurant;
+      newReview.groupe = groupe;
+      newReview.vote = vote;
+      newReview.review = null;
+
+      delete newReview.member.email;
+      delete newReview.member.lastname;
+      delete newReview.member.firstname;
+      delete newReview.member.password;
+
+      return await this.reviewRepository.save(newReview);
+    }
   }
 
   async findRestaurantsByMemberGroups(memberId: number) {

@@ -35,7 +35,7 @@ CREATE TABLE groupe (
 
 CREATE TABLE review (
   id SERIAL PRIMARY KEY,
-  review TEXT NOT NULL,
+  review TEXT NULL,
   vote BOOLEAN NOT NULL,
   idmember INTEGER,
   idrestaurant INTEGER,

@@ -27,12 +27,11 @@ export class MemberService implements OnModuleInit {
     console.log('le .env ' + process.env.ACCESS_TOKEN_SECRET);
   }
 
-  async update(
-    id: number,
-    currentPassword: string,
-    updateMemberDto: UpdateMemberDto,
-  ): Promise<Member> {
+  async update(id: number, updateMemberDto: UpdateMemberDto): Promise<Member> {
     const member = await this.memberRepository.findOne({ where: { id: id } });
+    console.log(updateMemberDto);
+    console.log(`Current Password: ${updateMemberDto.currentPassword}`);
+    console.log(`Stored Hash: ${member.password}`);
 
     if (!member) {
       throw new HttpException(
@@ -42,7 +41,7 @@ export class MemberService implements OnModuleInit {
     }
 
     const isPasswordMatching = await this.verifyPassword(
-      currentPassword,
+      updateMemberDto.currentPassword,
       member.password,
     );
 
@@ -50,10 +49,10 @@ export class MemberService implements OnModuleInit {
       throw new HttpException('Mot de passe incorrect', HttpStatus.BAD_REQUEST);
     }
 
-    if (updateMemberDto.password) {
+    if (updateMemberDto.newPassword) {
       const saltRounds = 10;
-      updateMemberDto.password = await bcrypt.hash(
-        updateMemberDto.password,
+      member.password = await bcrypt.hash(
+        updateMemberDto.newPassword,
         saltRounds,
       );
     }
