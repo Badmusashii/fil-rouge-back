@@ -107,6 +107,7 @@ export class RestaurantService {
 
     if (createRestaurantDto.reviews && createRestaurantDto.reviews.length > 0) {
       for (const reviewDto of createRestaurantDto.reviews) {
+        console.log('reviwDto ' + reviewDto);
         await this.reviewService.create(reviewDto, member, savedRestaurant.id);
       }
     }

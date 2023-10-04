@@ -76,19 +76,21 @@ export class ReviewService {
     member: any,
     idRestaurant: number,
   ): Promise<any> {
+    // Recherche le restaurant associé à l'ID donné
     const restaurant = await this.restaurantRespository.findOne({
       where: { id: idRestaurant },
     });
+    // Recherche le groupe associé à l'ID donné dans createReviewDto.
     const groupe = await this.groupeRepository.findOne({
       where: { id: createReviewDto.idgroupe },
     });
-
+    // Vérifie si le restaurant ou le groupe n'existe pas.
     if (!restaurant || !groupe) {
       throw new NotFoundException(
         "Une des entités associées n'a pas été trouvée",
       );
     }
-
+    // Recherche une review existante du membre pour le restaurant et le groupe donnés.
     const existingReview = await this.reviewRepository.findOne({
       where: {
         member: { id: member.id },
@@ -96,8 +98,9 @@ export class ReviewService {
         groupe: { id: createReviewDto.idgroupe },
       },
     });
-
+    // Si une review existe déjà.
     if (existingReview) {
+      // Vérifie si le vote est identique au vote précédent pour éviter le spam de "pouce haut" ou "pouce bas".
       if (existingReview.vote === createReviewDto.vote) {
         return {
           status: 'error',
@@ -105,9 +108,10 @@ export class ReviewService {
             'Vote déjà enregistré, impossible de voter deux fois de la même manière.',
         };
       }
-
+      // Met à jour la review existante.
       existingReview.review = createReviewDto.review;
       existingReview.vote = createReviewDto.vote;
+      // Sauvegarde la review mise à jour.
       const updatedReview = await this.reviewRepository.save(existingReview);
 
       return {
@@ -116,13 +120,14 @@ export class ReviewService {
         data: updatedReview,
       };
     } else {
+      // Crée une nouvelle review.
       const newReview = new Review();
       newReview.review = createReviewDto.review;
       newReview.vote = createReviewDto.vote;
       newReview.member = member.id;
       newReview.restaurant = restaurant;
       newReview.groupe = groupe;
-
+      // Sauvegarde la nouvelle review.
       const createdReview = await this.reviewRepository.save(newReview);
 
       return {
