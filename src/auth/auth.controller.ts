@@ -29,8 +29,8 @@ export class AuthController {
   @Patch('update')
   @UseGuards(AuthGuard('jwt'))
   update(@Request() req, @Body() updateDto: UpdateAuthDto) {
-    const member = req.user;
-    console.log(member);
-    return this.authService.update(member, updateDto);
+    const utilisateur = req.user;
+    console.log(utilisateur);
+    return this.authService.update(utilisateur, updateDto);
   }
 }

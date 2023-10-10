@@ -2,18 +2,12 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CategorieModule } from './categorie/categorie.module';
-import { Categorie } from './categorie/entities/categorie.entity';
-import { MemberModule } from './member/member.module';
-import { RestaurantModule } from './restaurant/restaurant.module';
-import { ReviewModule } from './review/review.module';
-import { GroupeModule } from './groupe/groupe.module';
-import { Groupe } from './groupe/entities/groupe.entity';
-import { Member } from './member/entities/member.entity';
-import { Restaurant } from './restaurant/entities/restaurant.entity';
-import { Review } from './review/entities/review.entity';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { RoleModule } from './role/role.module';
+import { UtilisateurModule } from './utilisateur/utilisateur.module';
+import { Utilisateur } from './utilisateur/entities/utilisateur.entity';
+import { Role } from './role/entities/role.entity';
 
 @Module({
   imports: [
@@ -27,7 +21,7 @@ import { ConfigModule } from '@nestjs/config';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Categorie, Groupe, Member, Restaurant, Review],
+      entities: [Utilisateur,Role],
       // Endroit ou il faut mettre toutes les entités pour que typeOrm les prennent
       // en compte.
       synchronize: false,
@@ -41,12 +35,9 @@ import { ConfigModule } from '@nestjs/config';
       logging: true,
       // Permet d'afficher les requetes SQL de TypeOrm dans la console
     }),
-    CategorieModule,
-    MemberModule,
-    RestaurantModule,
-    ReviewModule,
-    GroupeModule,
     AuthModule,
+    UtilisateurModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
