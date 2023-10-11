@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateAuthDto } from './dto/create-auth.dto';
@@ -12,26 +13,37 @@ import { Repository } from 'typeorm';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Role } from 'src/role/entities/role.entity';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(Utilisateur) private utilisateurRepository: Repository<Utilisateur>,
+    @InjectRepository(Role) private roleRepository: Repository<Role>,
     private jwtService: JwtService,
   ) {}
   async register(createAuthDto: CreateAuthDto) {
-    const { email,pseudo,mdp,idRole } = createAuthDto;
+    const { email,pseudo,mdp,role: idRole } = createAuthDto;
+
+    // Charge l'entité Role associée à l'identifiant idRole
+    const role = await this.roleRepository.findOne({ where: { idRole } });
+
+    if (!role) {
+      // Gérez le cas où le rôle n'existe pas
+      throw new NotFoundException('Rôle non trouvé');
+    }
+
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(mdp, salt);
     const utilisateur = this.utilisateurRepository.create({
       email,
       pseudo,
       mdp: hashedPassword,
-      idRole
+      role
     });
     try {
       const createdUtilisateur = await this.utilisateurRepository.save(utilisateur);
-      delete createdUtilisateur.mdp;
+      //delete createdUtilisateur.mdp;
       return createdUtilisateur;
     } catch (err) {
       if (err.code === '23505') {

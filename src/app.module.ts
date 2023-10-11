@@ -8,6 +8,16 @@ import { RoleModule } from './role/role.module';
 import { UtilisateurModule } from './utilisateur/utilisateur.module';
 import { Utilisateur } from './utilisateur/entities/utilisateur.entity';
 import { Role } from './role/entities/role.entity';
+import { TestModule } from './test/test.module';
+import { QuestionModule } from './question/question.module';
+import { AnalyseModule } from './analyse/analyse.module';
+import { ReponseModule } from './reponse/reponse.module';
+import { ReponseutiModule } from './reponseuti/reponseuti.module';
+import { Analyse } from './analyse/entities/analyse.entity';
+import { Question } from './question/entities/question.entity';
+import { Reponse } from './reponse/entities/reponse.entity';
+import { Reponseuti } from './reponseuti/entities/reponseuti.entity';
+import { Test } from './test/entities/test.entity';
 
 @Module({
   imports: [
@@ -21,7 +31,7 @@ import { Role } from './role/entities/role.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [Utilisateur,Role],
+      entities: [Utilisateur,Role,Analyse,Question,Reponse,Reponseuti,Test],
       // Endroit ou il faut mettre toutes les entités pour que typeOrm les prennent
       // en compte.
       synchronize: false,
@@ -38,6 +48,11 @@ import { Role } from './role/entities/role.entity';
     AuthModule,
     UtilisateurModule,
     RoleModule,
+    TestModule,
+    QuestionModule,
+    AnalyseModule,
+    ReponseModule,
+    ReponseutiModule,
   ],
   controllers: [AppController],
   providers: [AppService],
